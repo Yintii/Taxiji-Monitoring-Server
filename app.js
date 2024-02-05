@@ -31,7 +31,7 @@ app.post('/api/wallet_submit', (req, res) => {
   console.log('Process started successfully');
 
   process.on('message', (data => {
-    EventEmitter.emit('wallet_transaction', data);
+    eventEmitter.emit('wallet_transaction', data);
   }));
 
   res.status(200).send('Process started successfully');
