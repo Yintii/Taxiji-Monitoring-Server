@@ -1,17 +1,8 @@
 import Web3 from 'web3';
-import WebSocket from 'ws'
 import { ethers } from 'ethers';
 import dotenv from 'dotenv';
 dotenv.config();
 
-import express from 'express'
-import http from 'http'
-
-const app = express();
-const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
-
-const liveApiUrl = `wss://eth-mainnet.g.alchemy.com/v2/${process.env.LIVE_API_KEY}`;
 const sepoliaApiUrl = `wss://eth-sepolia.g.alchemy.com/v2/${process.env.SEPOLIA_API_KEY}`;
 const web3 = new Web3(sepoliaApiUrl);
 
@@ -71,6 +62,3 @@ subscription.on('data', async (txHash) => {
     }
 });
 
-server.listen(3000, ()=>{
-	console.log('Listening on 3000');
-})

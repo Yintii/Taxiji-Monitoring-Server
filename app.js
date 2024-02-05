@@ -1,12 +1,17 @@
 import express from 'express'
 import psList from 'ps-list'
 import { spawn } from 'child_process'
+import cors from 'cors'
 
 const app = express()
 const port = 3000;
+
+
+
 const walletProcesses = new Map();
 
 app.use(express.json());
+app.use(cors());
 
 app.post('/api/wallet_submit', (req, res) => {
   const { wallet_address } = req.body;
@@ -36,7 +41,9 @@ app.post('/api/wallet_stop/', (req, res)=>{
   res.status(200).send(`Process for ${wallet_address} stopped successfully.`);
 });
 
-
+app.get('/api/signal/:address', (req,res)=>{ 
+ return res.json({signal: 'show_popup'});
+});
 
 app.listen(port, ()=>{
 	console.log(`server listening at http://localhost:${port}`);
