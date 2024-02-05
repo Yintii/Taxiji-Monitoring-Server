@@ -15,7 +15,7 @@ const __dirname = dirname(__filename);
 
 const walletProcesses = new Map();
 
-
+let process;
 
 app.use(express.json());
 app.use(cors());
@@ -26,7 +26,7 @@ app.post('/api/wallet_submit', (req, res) => {
     return res.status(400).send('Process already running for this wallet.');
   }
 
-  const process = fork(path.join(__dirname, 'log_wallet.js'), [wallet_address]);
+  process = fork(path.join(__dirname, 'log_wallet.js'), [wallet_address]);
 
   walletProcesses.set(wallet_address, process);
   console.log('Process started successfully');
