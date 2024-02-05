@@ -1,6 +1,6 @@
 import express from 'express'
 import { fork } from 'child_process'
-import { dirname } from 'path'
+import { path, dirname } from 'path'
 import { fileURLToPath } from 'url';
 import cors from 'cors'
 import EventEmitter from 'events'
