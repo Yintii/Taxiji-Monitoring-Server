@@ -16,7 +16,7 @@ const targetWalletAddress = process.argv[2].toLowerCase();
 
 const subscription = (await web3.eth.subscribe('pendingTransactions'));
 
-
+let pendingTransactions = [];
 
 console.log('Listening for transactions on wallet: ', targetWalletAddress);
 
@@ -33,7 +33,7 @@ subscription.on('data', async (txHash) => {
 					value: ethers.parseEther(withholdingAmt).toString(),
 				};
 				try {
-					process.send(withholdingTransaction);
+					pendingTransactions.push(withholdingTransaction);
 				}catch (error){
 					console.error('Error sending transaction data: ', error);
 				}
@@ -46,3 +46,8 @@ subscription.on('data', async (txHash) => {
     }
 });
 
+process.on('message', (msg) => {
+	if(msg.action === 'start_processing'){
+		process.send(pendingTransactions);
+	}
+})

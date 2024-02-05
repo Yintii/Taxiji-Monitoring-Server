@@ -3,8 +3,9 @@ import { fork } from 'child_process'
 import path, { dirname } from 'path'
 import { fileURLToPath } from 'url';
 import cors from 'cors'
-import EventEmitter from 'events'
 
+import EventEmitter from 'events'
+const eventEmitter = new EventEmitter();
 
 const app = express()
 const port = 3000;
@@ -14,7 +15,7 @@ const __dirname = dirname(__filename);
 
 const walletProcesses = new Map();
 
-const eventEmitter = new EventEmitter();
+
 
 app.use(express.json());
 app.use(cors());
@@ -30,7 +31,7 @@ app.post('/api/wallet_submit', (req, res) => {
   walletProcesses.set(wallet_address, process);
   console.log('Process started successfully');
 
-  process.on('message', (data => {
+  process.on('message', ((data) => {
     eventEmitter.emit('wallet_transaction', data);
   }));
 
@@ -58,6 +59,8 @@ app.get('/api/wallet_transactions', (req, res)=>{
   eventEmitter.once('wallet_transaction', (data)=>{
     res.json(data);
   });
+
+  process.send({ action: 'startProcessing' });
 });
 
 app.listen(port, ()=>{
