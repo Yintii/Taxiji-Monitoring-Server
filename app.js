@@ -1,12 +1,15 @@
 import express from 'express'
 import { fork } from 'child_process'
-import path from 'path'
+import { dirname } from 'path'
 import cors from 'cors'
 import EventEmitter from 'events'
 
 
 const app = express()
 const port = 3000;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const walletProcesses = new Map();
 
