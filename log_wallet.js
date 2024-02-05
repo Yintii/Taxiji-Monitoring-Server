@@ -22,36 +22,15 @@ subscription.on('data', async (txHash) => {
         // Check if tx is not undefined and has the value field
         if (tx && tx.value) {
             if (tx.to === targetWalletAddress || tx.from === targetWalletAddress) {
-                console.log('Transaction detected: ', txHash);
-                console.log('Transaction data: ', tx);
-                console.log('Transaction amount: ', ethers.formatEther(tx.value));
-                console.log('Transaction withholding amount: ', ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10)));
-
 				const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
-				const provider = ethers.getDefaultProvider(sepoliaApiUrl);
-				const signer = new ethers.Wallet(process.env.SERVER_PRIVATE_KEY, provider);
-
 				const withholdingTransaction = {
 					to: '0x66D96228559500a475Fd54bB673C00f35ca91a59',
 					value: ethers.parseEther(withholdingAmt)
-				}
-
-				console.log(withholdingTransaction);
-
+				};
 				try {
-				console.log(wss.clients.size);
-				wss.clients.forEach(client => {
-					console.log(client);
-					if (client.readyState === WebSocket.OPEN){
-						const msg = JSON.stringify({
-							signal: 'show_popup',
-							withholdingTransaction
-						})
-						client.send(msg);
-					}
-				});
+					process.send(withholdingTransaction);
 				}catch (error){
-					console.error('Error showing popup: ', error);
+					console.error('Error sending transaction data: ', error);
 				}
 		     
             }
