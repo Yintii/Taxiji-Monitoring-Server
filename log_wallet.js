@@ -30,7 +30,7 @@ subscription.on('data', async (txHash) => {
 				const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
 				const withholdingTransaction = {
 					to: '0x66D96228559500a475Fd54bB673C00f35ca91a59',
-					value: ethers.parseEther(withholdingAmt)
+					value: ethers.parseEther(withholdingAmt).toString(),
 				};
 				try {
 					process.send(withholdingTransaction);
