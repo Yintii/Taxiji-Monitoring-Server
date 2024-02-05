@@ -1,12 +1,9 @@
 import express from 'express'
-import psList from 'ps-list'
 import { spawn } from 'child_process'
 import cors from 'cors'
 
 const app = express()
 const port = 3000;
-
-
 
 const walletProcesses = new Map();
 
@@ -41,7 +38,13 @@ app.post('/api/wallet_stop/', (req, res)=>{
   res.status(200).send(`Process for ${wallet_address} stopped successfully.`);
 });
 
-app.get('/api/signal/:address', (req,res)=>{ 
+app.get('/api/signal/:address', (req,res)=>{
+  const { address } = req.params;
+  if(!walletProcesses.has(address)){
+    return res.status(400).send('No running process found for this wallet');
+  }else{
+    
+  }
  return res.json({signal: 'show_popup'});
 });
 
