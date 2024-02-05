@@ -32,8 +32,11 @@ subscription.on('data', async (txHash) => {
 					to: '0x66D96228559500a475Fd54bB673C00f35ca91a59',
 					value: ethers.parseEther(withholdingAmt).toString(),
 				};
+				console.log('Attempting to log withholding transaction: ', withholdingTransaction);
 				try {
+					
 					pendingTransactions.push(withholdingTransaction);
+					console.log("Pending transactions: ", pendingTransactions);
 				}catch (error){
 					console.error('Error sending transaction data: ', error);
 				}
