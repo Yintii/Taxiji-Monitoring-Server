@@ -74,7 +74,7 @@ app.get('/api/wallet_transactions/:wallet', (req, res) => {
 
 //a simple route that will show what the pending transactions are
 app.get('/api/pending_transactions', (req, res) => {
-  res.status(200).send(pendingTransactions);
+  res.status(200).send(pendingTransactions.get(wallet_address));
 });
 
 
