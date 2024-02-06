@@ -36,6 +36,7 @@ app.post('/api/wallet_submit', (req, res) => {
     console.log('Message received from child process: ', data);
     try{
       pendingTransactions.set(wallet_address, data);  // Store the pending transactions in a map
+      console.log('Pending transactions: ', pendingTransactions);
     }catch(error){
       console.error('Error storing pending transactions: ', error);
     }
