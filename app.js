@@ -1,11 +1,13 @@
-import express from 'express';
-import { fork } from 'child_process';
-import path, { dirname } from 'path';
+import express from 'express'
+import { fork } from 'child_process'
+import path, { dirname } from 'path'
 import { fileURLToPath } from 'url';
-import cors from 'cors';
-import eventEmitter from './log_wallet.js';
+import cors from 'cors'
 
-const app = express();
+import EventEmitter from 'events'
+const eventEmitter = new EventEmitter();
+
+const app = express()
 const port = 3000;
 
 const __filename = fileURLToPath(import.meta.url);
@@ -18,9 +20,10 @@ let process;
 app.use(express.json());
 app.use(cors());
 
+
 app.post('/api/wallet_submit', (req, res) => {
   const { wallet_address } = req.body;
-  if (walletProcesses.has(wallet_address)) {
+  if (walletProcesses.has(wallet_address)){
     return res.status(400).send('Process already running for this wallet.');
   }
 
@@ -30,22 +33,25 @@ app.post('/api/wallet_submit', (req, res) => {
   console.log('Process started successfully');
 
   process.on('message', ((data) => {
-    // Handle data from child process if needed
+    eventEmitter.emit('wallet_transaction', data);
   }));
 
   res.status(200).send('Process started successfully');
 });
 
 
-app.post('/api/wallet_stop/', (req, res) => {
-  const { wallet_address } = req.body;
 
-  if (!walletProcesses.has(wallet_address)) {
+
+
+app.post('/api/wallet_stop/', (req, res)=>{
+  const { wallet_address } = req.body;
+  
+  if(!walletProcesses.has(wallet_address)){
     return res.status(400).send('No running process found for this wallet');
   }
 
   const process = walletProcesses.get(wallet_address);
-
+ 
   process.kill()
 
   walletProcesses.delete(wallet_address);
@@ -54,17 +60,25 @@ app.post('/api/wallet_stop/', (req, res) => {
   res.status(200).send(`Process for ${wallet_address} stopped successfully.`);
 });
 
-app.get('/api/wallet_transactions', (req, res) => {
-  const transactions = [];
 
-  eventEmitter.on('transactionDetected', (transaction) => {
-    transactions.push(transaction);
-  });
 
-  // Send the collected transactions as a response
-  res.json(transactions);
+
+app.get('/api/wallet_transactions', (req, res)=>{
+  res.json({ message: 'Wallet transactions will be sent here' });
+  // eventEmitter.once('wallet_transaction', (data)=>{
+  //   res.json(data);
+  // });
+
+  // process.send({ action: 'startProcessing' });
 });
 
-app.listen(port, () => {
-  console.log(`server listening at http://localhost:${port}`);
+
+
+
+
+
+
+
+app.listen(port, ()=>{
+	console.log(`server listening at http://localhost:${port}`);
 });
