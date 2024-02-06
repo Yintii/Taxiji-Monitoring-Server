@@ -65,18 +65,18 @@ app.post('/api/wallet_stop/', (req, res)=>{
 });
 
 
-
-
 app.get('/api/wallet_transactions/:wallet', (req, res) => {
   const wallet = req.params.wallet.toLowerCase();
+
   if (!pendingTransactions.has(wallet)) {
     return res.status(404).send('No pending transactions found for this wallet');
   }
+
   const transactions = pendingTransactions.get(wallet);
-  res.status(200).send(transactions);
+
+  // Send the transactions as JSON response
+  res.status(200).json(transactions);
 });
-
-
 
 
 
