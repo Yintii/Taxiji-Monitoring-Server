@@ -29,7 +29,7 @@ app.post('/api/wallet_submit', (req, res) => {
 
   const process = fork(path.join(__dirname, 'log_wallet.js'), [wallet_address.toLowerCase()]);
 
-  walletProcesses.set(wallet_address, process);
+  walletProcesses.set(wallet_address.toLowerCase(), process);
   console.log('Process started successfully');
 
   process.on('message', ( async (data) => {
