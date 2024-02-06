@@ -20,13 +20,6 @@ let process;
 app.use(express.json());
 app.use(cors());
 
-
-
-
-
-
-
-
 app.post('/api/wallet_submit', (req, res) => {
   const { wallet_address } = req.body;
   if (walletProcesses.has(wallet_address)){
@@ -45,7 +38,9 @@ app.post('/api/wallet_submit', (req, res) => {
   res.status(200).send('Process started successfully');
 });
 
-
+eventEmitter.on('wallet_transaction', (data) => {
+  console.log("Emitted wallet_trasnaction: ", data);
+});
 
 
 
@@ -67,24 +62,8 @@ app.post('/api/wallet_stop/', (req, res)=>{
 });
 
 
-
-
-app.get('/api/wallet_transactions', (req, res)=>{
-  res.json({ message: 'Wallet transactions will be sent here' });
-  // eventEmitter.once('wallet_transaction', (data)=>{
-  //   res.json(data);
-  // });
-
-  // process.send({ action: 'startProcessing' });
-});
-
-
-
-
-
-
-
-
 app.listen(port, ()=>{
 	console.log(`server listening at http://localhost:${port}`);
 });
+
+
