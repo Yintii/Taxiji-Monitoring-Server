@@ -32,9 +32,13 @@ app.post('/api/wallet_submit', (req, res) => {
   walletProcesses.set(wallet_address, process);
   console.log('Process started successfully');
 
-  process.on('message', ((data) => {
+  process.on('message', ( async (data) => {
     console.log('Message received from child process: ', data);
-    pendingTransactions.set(wallet_address, data);  // Store the pending transactions in a map
+    try{
+      pendingTransactions.set(wallet_address, data);  // Store the pending transactions in a map
+    }catch(error){
+      console.error('Error storing pending transactions: ', error);
+    }
   }));
 
   res.status(200).send('Process started successfully');
@@ -59,18 +63,6 @@ app.post('/api/wallet_stop/', (req, res)=>{
 });
 
 
-app.get('/api/wallet_transactions/:wallet', (req, res) => {
-  const wallet = req.params.wallet.toLowerCase();
-
-  if (!pendingTransactions.has(wallet)) {
-    return res.status(404).send('No pending transactions found for this wallet');
-  }
-
-  const transactions = pendingTransactions.get(wallet);
-
-  console.log('Wallet: ', wallet);
-  console.log('Pending transactions: ', transactions);
-});
 
 //a simple route that will show what the pending transactions are
 app.get('/api/pending_transactions/:wallet_address', (req, res) => {
