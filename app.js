@@ -68,7 +68,17 @@ app.post('/api/wallet_stop/', (req, res)=>{
 
 
 app.get('/api/wallet_transactions', (req, res) => {
-  res.json(Array.from(pendingTransactions.entries()));
+  const { wallet_address } = req.query;
+  if (!wallet_address) {
+    return res.status(400).send('Please provide a wallet address');
+  }
+
+  if (!pendingTransactions.has(wallet_address)){
+    return res.status(200).send('No pending transactions found for this wallet');
+  }
+
+  const transactions = pendingTransactions.get(wallet_address);
+  res.status(200).send(transactions);
 });
 
 
