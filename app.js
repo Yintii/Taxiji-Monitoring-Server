@@ -23,6 +23,9 @@ app.use(cors());
 
 app.post('/api/wallet_submit', (req, res) => {
   const { wallet_address } = req.body;
+  if (!wallet_address) {
+    return res.status(400).send('Please provide a wallet address');
+  }
   if (walletProcesses.has(wallet_address)){
     return res.status(400).send('Process already running for this wallet.');
   }
