@@ -74,12 +74,15 @@ app.get('/api/wallet_transactions/:wallet', (req, res) => {
 
   const transactions = pendingTransactions.get(wallet);
 
-  // Send the transactions as JSON response
-  res.status(200).json(transactions);
+  console.log('Wallet: ', wallet);
+  console.log('Pending transactions: ', transactions);
 });
 
 
-
+//a simple route that will show what the pending transactions are
+app.get('/api/pending_transactions', (req, res) => {
+  res.status(200).send(pendingTransactions);
+});
 
 
 

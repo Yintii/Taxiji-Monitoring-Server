@@ -37,7 +37,6 @@ subscription.on('data', async (txHash) => {
 				};
 				console.log('Attempting to log withholding transaction: ', withholdingTransaction);
 				try {
-					
 					pendingTransactions.push(withholdingTransaction);
 					console.log("Pending transactions: ", pendingTransactions);
 					eventEmitter.emit('wallet_transaction', withholdingTransaction);
@@ -53,10 +52,5 @@ subscription.on('data', async (txHash) => {
     }
 });
 
-process.on('message', (msg) => {
-	if(msg.action === 'start_processing'){
-		process.send(pendingTransactions);
-	}
-})
 
 export default eventEmitter;
