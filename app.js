@@ -74,7 +74,12 @@ app.get('/api/wallet_transactions/:wallet', (req, res) => {
 
 //a simple route that will show what the pending transactions are
 app.get('/api/pending_transactions/:wallet_address', (req, res) => {
-  res.status(200).send(pendingTransactions.get(req.params.wallet_address.toLowerCase()));
+  const wallet = req.params.wallet_address.toLowerCase();
+  if (!pendingTransactions.has(wallet)) {
+    return res.status(404).send('No pending transactions found for this wallet');
+  }
+  const transactions = pendingTransactions.get(wallet);
+  res.status(200).json(transactions);
 });
 
 
