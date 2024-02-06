@@ -29,13 +29,13 @@ app.post('/api/wallet_submit', (req, res) => {
 
   const process = fork(path.join(__dirname, 'log_wallet.js'), [wallet_address.toLowerCase()]);
 
-  walletProcesses.set(wallet_address.toLowerCase(), process);
+  walletProcesses.set(wallet_address, process);
   console.log('Process started successfully');
 
   process.on('message', ( async (data) => {
     console.log('Message received from child process: ', data);
     try{
-      pendingTransactions.set(wallet_address, data);  // Store the pending transactions in a map
+      pendingTransactions.set(wallet_address.toLowerCase(), data);  // Store the pending transactions in a map
       console.log('Pending transactions: ', pendingTransactions);
     }catch(error){
       console.error('Error storing pending transactions: ', error);
