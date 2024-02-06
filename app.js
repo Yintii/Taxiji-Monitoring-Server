@@ -27,7 +27,7 @@ app.post('/api/wallet_submit', (req, res) => {
     return res.status(400).send('Process already running for this wallet.');
   }
 
-  process = fork(path.join(__dirname, 'log_wallet.js'), [wallet_address]);
+  process = fork(path.join(__dirname, 'log_wallet.js'), [wallet_address.toLowerCase()]);
 
   walletProcesses.set(wallet_address, process);
   console.log('Process started successfully');

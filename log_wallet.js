@@ -6,7 +6,6 @@ import { dirname } from 'path';
 dotenv.config();
 
 import EventEmitter from 'events';
-import e from 'express';
 const eventEmitter = new EventEmitter();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -15,8 +14,7 @@ const __dirname = dirname(__filename);
 const sepoliaApiUrl = `wss://eth-sepolia.g.alchemy.com/v2/${process.env.SEPOLIA_API_KEY}`;
 const web3 = new Web3(sepoliaApiUrl);
 
-const targetWalletAddress = process.argv[2].toLowerCase();
-
+const targetWalletAddress = process.argv[2];
 
 const subscription = (await web3.eth.subscribe('pendingTransactions'));
 
