@@ -4,8 +4,7 @@ import path, { dirname } from 'path'
 import { fileURLToPath } from 'url';
 import cors from 'cors'
 
-import EventEmitter from 'events'
-const eventEmitter = new EventEmitter();
+import eventEmitter from './log_wallet.js'; // Import the event emitter from log_wallet.js
 
 const app = express()
 const port = 3000;
@@ -14,6 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const walletProcesses = new Map();
+const pendingTransactions = new Map();
 
 let process;
 
@@ -33,7 +33,8 @@ app.post('/api/wallet_submit', (req, res) => {
   console.log('Process started successfully');
 
   process.on('message', ((data) => {
-    eventEmitter.emit('wallet_transaction', data);
+    console.log('Message received from child process: ', data);
+    pendingTransactions.set(wallet_address, data);  // Store the pending transactions in a map
   }));
 
   res.status(200).send('Process started successfully');
@@ -63,13 +64,14 @@ app.post('/api/wallet_stop/', (req, res)=>{
 
 
 
-app.get('/api/wallet_transactions', (req, res)=>{
-  res.json({ message: 'Wallet transactions will be sent here' });
-  // eventEmitter.once('wallet_transaction', (data)=>{
-  //   res.json(data);
-  // });
+app.get('/api/wallet_transactions/:wallet', (req, res)=>{
+  const wallet = req.params.wallet;
+  if(!pendingTransactions.has(wallet)){
+    return res.status(400).send('No transactions found for this wallet');
+  }
 
-  // process.send({ action: 'startProcessing' });
+  const transactions = pendingTransactions.get(wallet);
+  res.status(200).send(transactions);
 });
 
 
