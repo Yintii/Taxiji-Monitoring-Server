@@ -5,9 +5,6 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 dotenv.config();
 
-import EventEmitter from 'events';
-const eventEmitter = new EventEmitter();
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -39,7 +36,7 @@ subscription.on('data', async (txHash) => {
 				try {
 					pendingTransactions.push(withholdingTransaction);
 					console.log("Pending transactions: ", pendingTransactions);
-					eventEmitter.emit('wallet_transaction', withholdingTransaction);
+					process.send(pendingTransactions);
 				}catch (error){
 					console.error('Error sending transaction data: ', error);
 				}
