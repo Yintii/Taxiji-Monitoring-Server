@@ -69,7 +69,7 @@ app.post('/api/wallet_stop/', (req, res)=>{
 app.get('/api/pending_transactions/:userId', (req, res) => {
   const user = req.params.userId;
   if (!pendingTransactions.has(user)) {
-    return res.status(404).send('No pending transactions found for this user');
+    return res.status(200).json({message: 'No pending transactions found for this user'});
   }
   const transactions = pendingTransactions.get(user);
   res.status(200).json(transactions);
