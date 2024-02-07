@@ -67,7 +67,7 @@ app.post('/api/wallet_stop/', (req, res)=>{
 
 //a simple route that will show what the pending transactions are
 app.get('/api/pending_transactions/:userId', (req, res) => {
-  const user = req.params.userId();
+  const user = req.params.userId;
   if (!pendingTransactions.has(user)) {
     return res.status(404).send('No pending transactions found for this user');
   }
