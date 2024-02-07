@@ -19,7 +19,7 @@ app.use(cors());
 
 
 app.post('/api/wallet_submit', (req, res) => {
-  const { wallet_address } = req.body;
+  const { wallet_address, user_id } = req.body;
   if (!wallet_address) {
     return res.status(400).send('Please provide a wallet address');
   }
@@ -35,7 +35,7 @@ app.post('/api/wallet_submit', (req, res) => {
   process.on('message', ( async (data) => {
     console.log('Message received from child process: ', data);
     try{
-      pendingTransactions.set(wallet_address.toLowerCase(), data);  // Store the pending transactions in a map
+      pendingTransactions.set(user_id, data);  // Store the pending transactions in a map
       console.log('Pending transactions: ', pendingTransactions);
     }catch(error){
       console.error('Error storing pending transactions: ', error);
@@ -47,7 +47,7 @@ app.post('/api/wallet_submit', (req, res) => {
 
 
 app.post('/api/wallet_stop/', (req, res)=>{
-  const { wallet_address } = req.body;
+  const { wallet_address, user_id} = req.body;
   
   if(!walletProcesses.has(wallet_address)){
     return res.status(400).send('No running process found for this wallet');
@@ -66,12 +66,12 @@ app.post('/api/wallet_stop/', (req, res)=>{
 
 
 //a simple route that will show what the pending transactions are
-app.get('/api/pending_transactions/:wallet_address', (req, res) => {
-  const wallet = req.params.wallet_address.toLowerCase();
-  if (!pendingTransactions.has(wallet)) {
-    return res.status(404).send('No pending transactions found for this wallet');
+app.get('/api/pending_transactions/:userId', (req, res) => {
+  const user = req.params.userId();
+  if (!pendingTransactions.has(user)) {
+    return res.status(404).send('No pending transactions found for this user');
   }
-  const transactions = pendingTransactions.get(wallet);
+  const transactions = pendingTransactions.get(user);
   res.status(200).json(transactions);
 });
 
