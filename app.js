@@ -37,6 +37,7 @@ app.post('/api/wallet_submit', (req, res) => {
     try{
       pendingTransactions.set(user_id, data);  // Store the pending transactions in a map
       console.log('Pending transactions: ', pendingTransactions);
+      console.log('Pending transactions for user ', user_id, ': ', pendingTransactions.get(user_id));
     }catch(error){
       console.error('Error storing pending transactions: ', error);
     }
