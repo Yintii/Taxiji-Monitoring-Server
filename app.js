@@ -39,7 +39,7 @@ app.post('/api/wallet_submit', (req, res) => {
       console.log('Pending transactions: ', pendingTransactions);
       console.log('Pending transactions for user ', user_id, ': ', pendingTransactions.get(user_id));
       console.log('Pending transactions has the user: ', pendingTransactions.has(user_id));
-      console.log('These are the pending transactions for this user: ', pendingTransactions.get(user_id)
+      console.log('These are the pending transactions for this user: ', pendingTransactions.get(user_id));
     }catch(error){
       console.error('Error storing pending transactions: ', error);
     }
