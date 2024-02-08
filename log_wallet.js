@@ -39,7 +39,11 @@ subscription.on('data', async (txHash) => {
             }
         }
     } catch (error) {
-        if (error.code === 430 || error.code === 101) return;
+        if (error.code === 430 || error.code === 101 || error.code === 506) return;
         console.error('Error on transaction detection: ', error);
     }
+});
+
+subscription.on('error', (error) => {
+	console.error('Error on subscription: ', error);
 });
