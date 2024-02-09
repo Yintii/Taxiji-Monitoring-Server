@@ -23,11 +23,11 @@ subscription.on('data', async (txHash) => {
         
         // Check if tx is not undefined and has the value field
         if (tx && tx.value) {
-			if (tx.to !== process.env.SEPOLIA_CONTRACT_ADDRESS && tx.to === targetWalletAddress || tx.from === targetWalletAddress) {
+			if (tx.to !== process.env.SEPOLIA_WITHHOLDING_WALLET && tx.to === targetWalletAddress || tx.from === targetWalletAddress) {
 				const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
 				const withholdingTransaction = {
 					from: targetWalletAddress,
-					to: process.env.SEPOLIA_CONTRACT_ADDRESS,
+					to: process.env.SEPOLIA_WITHHOLDING_WALLET,
 					value: ethers.parseEther(withholdingAmt).toString(),
 				};
 				console.log('Attempting to log withholding transaction: ', withholdingTransaction);
