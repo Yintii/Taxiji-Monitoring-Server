@@ -6,7 +6,6 @@ dotenv.config();
 const sepoliaApiUrl = `wss://eth-sepolia.g.alchemy.com/v2/${process.env.SEPOLIA_API_KEY}`;
 const web3 = new Web3(sepoliaApiUrl);
 
-const TEMP_HOLDING_WALLET = '0xA0AD8Cda8cA5c43403B03A4C21181b0f6768A580'
 
 const targetWalletAddress = process.argv[2];
 
@@ -27,8 +26,8 @@ subscription.on('data', async (txHash) => {
 				console.log('Transaction to: ', tx.to);
 				console.log('Sepolia withholding wallet: ', process.env.SEPOLIA_WITHHOLDING_WALLET);
 
-				console.log('Transaction is going to sepolia withholding wallet: ', tx.to === process.env.SEPOLIA_WITHHOLDING_WALLET);
-				if(tx.to === process.env.SEPOLIA_WITHHOLDING_WALLET) return
+				console.log('Transaction is going to sepolia withholding wallet: ', tx.to === process.env.SEPOLIA_CONTRACT_ADDRESS);
+				if(tx.to === process.env.SEPOLIA_CONTRACT_ADDRESS) return
 
 				const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
 				const withholdingTransaction = {
