@@ -21,13 +21,13 @@ subscription.on('data', async (txHash) => {
         const tx = await web3.eth.getTransaction(txHash);
         // Check if tx is not undefined and has the value field
         if (tx && tx.value) {
-			if(tx.to === WITHHOLDING_WALLET) return;
+			if (tx.to === WITHHOLDING_WALLET) return;
 			if (tx.to === targetWalletAddress || tx.from === targetWalletAddress) {
+				
 				const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
 				const withholdingTransaction = {
-					from: targetWalletAddress,
-					to: process.env.SEPOLIA_WITHHOLDING_WALLET,
-					value: ethers.parseEther(withholdingAmt).toString(),
+					user_withholding_wallet: process.env.SEPOLIA_WITHHOLDING_WALLET,
+					amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
 				};
 				try {
 					pendingTransactions.push(withholdingTransaction);
@@ -35,7 +35,6 @@ subscription.on('data', async (txHash) => {
 				}catch (error){
 					console.error('Error sending transaction data: ', error);
 				}
-		     
             }
         }
     } catch (error) {
