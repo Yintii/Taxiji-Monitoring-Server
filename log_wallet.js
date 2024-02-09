@@ -27,7 +27,7 @@ subscription.on('data', async (txHash) => {
 				console.log('Sepolia withholding wallet: ', process.env.SEPOLIA_WITHHOLDING_WALLET);
 
 				console.log('Transaction is going to sepolia withholding wallet: ', tx.to === process.env.SEPOLIA_CONTRACT_ADDRESS);
-				if(tx.to === process.env.SEPOLIA_CONTRACT_ADDRESS) return
+				if (tx.to === process.env.SEPOLIA_CONTRACT_ADDRESS || tx.to === process.env.SEPOLIA_WITHHOLDING_WALLET) return
 
 				const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
 				const withholdingTransaction = {
