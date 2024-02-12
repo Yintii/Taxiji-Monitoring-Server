@@ -22,7 +22,6 @@ subscription.on('data', async (txHash) => {
         // Check if tx is not undefined and has the value field
         if (tx && tx.value) {
 			let notToContract = tx.to !== '0x7509aa80ef5a70f0e8ec15018916574097dd1137';
-			console.log("Sending funds to contract: ", notToContract);
 			if (notToContract && tx.from === targetWalletAddress || notToContract && tx.to === targetWalletAddress) {
 				console.log('Transaction detected: ', tx);
 				
