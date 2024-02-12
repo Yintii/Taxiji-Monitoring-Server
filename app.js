@@ -75,7 +75,7 @@ app.get('/api/pending_transactions/:user_id', (req, res) => {
 });
 
 
-app.delete('/api/pending_transactions/:user_id', ()=>{
+app.delete('/api/pending_transactions/:user_id', (req, res)=>{
   //get the hash from the request body
   const hash = req.body.hash;
   const user_id = Number(req.params.user);

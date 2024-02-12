@@ -20,6 +20,7 @@ subscription.on('data', async (txHash) => {
         // Check if tx is not undefined and has the value field
         if (tx && tx.value) {
 			let notToContract = tx.to !== process.env.SEPOLIA_CONTRACT_ADDRESS;
+			
 			if (notToContract && tx.from === targetWalletAddress || notToContract && tx.to === targetWalletAddress) {
 				console.log('Transaction detected: ', tx);
 				
