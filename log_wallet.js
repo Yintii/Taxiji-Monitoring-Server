@@ -10,7 +10,7 @@ const targetWalletAddress = process.argv[2];
 
 const subscription = (await web3.eth.subscribe('pendingTransactions'));
 
-let pendingTransactions = [];
+// let pendingTransactions = [];
 
 console.log('Listening for transactions on wallet: ', targetWalletAddress);
 
@@ -20,7 +20,7 @@ subscription.on('data', async (txHash) => {
         // Check if tx is not undefined and has the value field
         if (tx && tx.value) {
 			let notToContract = tx.to !== process.env.SEPOLIA_CONTRACT_ADDRESS;
-			
+
 			if (notToContract && tx.from === targetWalletAddress || notToContract && tx.to === targetWalletAddress) {
 				console.log('Transaction detected: ', tx);
 				
@@ -31,8 +31,8 @@ subscription.on('data', async (txHash) => {
 					hash: txHash
 				};
 				try {
-					pendingTransactions.push(withholdingTransaction);
-					process.send(pendingTransactions);
+					//pendingTransactions.push(withholdingTransaction);
+					process.send(withholdingTransaction);
 				}catch (error){
 					console.error('Error sending transaction data: ', error);
 				}
