@@ -75,7 +75,21 @@ app.get('/api/pending_transactions/:user_id', (req, res) => {
 });
 
 
-
+app.delete('/api/pending_transactions/:user_id', ()=>{
+  //get the hash from the request body
+  const hash = req.body.hash;
+  const user_id = Number(req.params.user);
+  if (!pendingTransactions.has(user_id)) {
+    return res.status(200).json({message: 'No pending transactions found for this user'});
+  }
+  const transactions = pendingTransactions.get(user_id);
+  //filter out the transaction with the hash
+  const updatedTransactions = transactions.filter((transaction) => transaction.hash !== hash);
+  //update the pending transactions map
+  pendingTransactions.set(user_id, updatedTransactions);
+  //send a response
+  res.status(200).json({message: 'Transaction removed successfully'});
+});
 
 app.listen(port, ()=>{
 	console.log(`server listening at http://localhost:${port}`);
