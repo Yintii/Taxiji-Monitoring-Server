@@ -21,8 +21,8 @@ subscription.on('data', async (txHash) => {
         const tx = await web3.eth.getTransaction(txHash);
         // Check if tx is not undefined and has the value field
         if (tx && tx.value) {
-			if (tx.to === WITHHOLDING_WALLET) return;
 			if (tx.to === targetWalletAddress || tx.from === targetWalletAddress) {
+				console.log('Transaction detected: ', tx);
 				
 				const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
 				const withholdingTransaction = {
