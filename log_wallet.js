@@ -27,6 +27,7 @@ subscription.on('data', async (txHash) => {
 				const withholdingTransaction = {
 					user_withholding_wallet: process.env.SEPOLIA_WITHHOLDING_WALLET,
 					amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
+					hash: txHash
 				};
 				try {
 					pendingTransactions.push(withholdingTransaction);
