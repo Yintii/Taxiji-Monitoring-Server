@@ -6,8 +6,6 @@ dotenv.config();
 const sepoliaApiUrl = `wss://eth-sepolia.g.alchemy.com/v2/${process.env.SEPOLIA_API_KEY}`;
 const web3 = new Web3(sepoliaApiUrl);
 
-const WITHHOLDING_WALLET = '0xA0AD8Cda8cA5c43403B03A4C21181b0f6768A580'
-
 const targetWalletAddress = process.argv[2];
 
 const subscription = (await web3.eth.subscribe('pendingTransactions'));
@@ -21,7 +19,7 @@ subscription.on('data', async (txHash) => {
         const tx = await web3.eth.getTransaction(txHash);
         // Check if tx is not undefined and has the value field
         if (tx && tx.value) {
-			let notToContract = tx.to !== '0x7509aa80ef5a70f0e8ec15018916574097dd1137';
+			let notToContract = tx.to !== process.env.SEPOLIA_CONTRACT_ADDRESS;
 			if (notToContract && tx.from === targetWalletAddress || notToContract && tx.to === targetWalletAddress) {
 				console.log('Transaction detected: ', tx);
 				
