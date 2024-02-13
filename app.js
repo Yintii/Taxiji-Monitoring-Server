@@ -17,7 +17,7 @@ const pendingTransactions = new Map();
 app.use(express.json());
 app.use(cors());
 
-
+//creat wallet
 app.post('/api/wallet_submit', (req, res) => {
   const { wallet_address, user_id } = req.body;
   if (!wallet_address) {
@@ -46,7 +46,7 @@ app.post('/api/wallet_submit', (req, res) => {
   res.status(200).send('Process started successfully');
 });
 
-
+//destroy wallet
 app.post('/api/wallet_stop/', (req, res)=>{
   const { wallet_address, user_id} = req.body;
   
@@ -66,6 +66,7 @@ app.post('/api/wallet_stop/', (req, res)=>{
 
 
 
+
 //a simple route that will show what the pending transactions are
 app.get('/api/pending_transactions/:user_id', (req, res) => {
   const user_id = Number(req.params.user_id);
@@ -76,7 +77,7 @@ app.get('/api/pending_transactions/:user_id', (req, res) => {
   res.status(200).json(transactions);
 });
 
-
+//a route to remove the pending transactions when they're settled
 app.delete('/api/pending_transactions/:user_id', (req, res)=>{
   //get the hash from the request body
   const hash = req.body.hash;
