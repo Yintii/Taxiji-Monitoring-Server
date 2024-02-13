@@ -6,7 +6,7 @@ import cors from 'cors'
 import fs from 'fs'
 import https from 'https'
 
-const privateKey = fs.readFileSync('private.pem', 'utf8');
+const privateKey = fs.readFileSync('private.key', 'utf8');
 const certificate = fs.readFileSync('csr.pem', 'utf8');
 
 const app = express()
