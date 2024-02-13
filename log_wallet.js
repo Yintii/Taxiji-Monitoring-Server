@@ -26,6 +26,8 @@ subscription.on('data', async (txHash) => {
 
 			if (notToContract && tx.from === targetWalletAddress || notToContract && tx.to === targetWalletAddress) {
 				console.log('Transaction detected: ', tx);
+
+				console.log('Contract address: ', process.env.SEPOLIA_CONTRACT_ADDRESS);
 				
 
 				console.log("Not to cotract: ", notToContract);
