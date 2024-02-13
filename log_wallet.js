@@ -19,28 +19,9 @@ subscription.on('data', async (txHash) => {
         const tx = await web3.eth.getTransaction(txHash);
         // Check if tx is not undefined and has the value field
         if (tx && tx.value) {
-
-
 			// Check if the transaction is not to the contract
 			let notToContract = tx.to !== process.env.SEPOLIA_CONTRACT_ADDRESS;
-
 			if (notToContract && tx.from === targetWalletAddress || notToContract && tx.to === targetWalletAddress) {
-				console.log('Transaction detected: ', tx);
-
-				console.log('Contract address: ', process.env.SEPOLIA_CONTRACT_ADDRESS);
-				
-
-				console.log("Not to cotract: ", notToContract);
-				console.log("tx.from: ", tx.from);
-				console.log("tx.to: ", tx.to);
-
-				let first_clause = notToContract && tx.from === targetWalletAddress;
-				let second_clause = notToContract && tx.to === targetWalletAddress;
-
-				console.log("First clause: ", first_clause);
-				console.log("Second clause: ", second_clause);
-
-
 				const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
 				const withholdingTransaction = {
 					user_withholding_wallet: process.env.SEPOLIA_WITHHOLDING_WALLET,

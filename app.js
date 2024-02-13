@@ -3,6 +3,11 @@ import { fork } from 'child_process'
 import path, { dirname } from 'path'
 import { fileURLToPath } from 'url';
 import cors from 'cors'
+import fs from 'fs'
+import https from 'https'
+
+const privateKey = fs.readFileSync('private.pem', 'utf8');
+const certificate = fs.readFileSync('csr.pem', 'utf8');
 
 const app = express()
 const port = 3000;
@@ -13,12 +18,11 @@ const __dirname = dirname(__filename);
 const walletProcesses = new Map();
 const pendingTransactions = new Map();
 
-
 app.use(express.json());
 app.use(cors());
 
 //creat wallet
-app.post('/api/wallet_submit', (req, res) => {
+app.post('/api/wallet_submit/', (req, res) => {
   const { wallet_address, user_id } = req.body;
   if (!wallet_address) {
     return res.status(400).send('Please provide a wallet address');
@@ -47,7 +51,7 @@ app.post('/api/wallet_submit', (req, res) => {
 });
 
 //destroy wallet
-app.post('/api/wallet_stop/', (req, res)=>{
+app.post('/api/wallet_stop/', (req, res) => {
   const { wallet_address, user_id} = req.body;
   
   if(!walletProcesses.has(wallet_address)){
@@ -64,11 +68,8 @@ app.post('/api/wallet_stop/', (req, res)=>{
   res.status(200).send(`Process for ${wallet_address} stopped successfully.`);
 });
 
-
-
-
 //a simple route that will show what the pending transactions are
-app.get('/api/pending_transactions/:user_id', (req, res) => {
+app.get('/api/pending_transactions/:user_id/', (req, res) => {
   const user_id = Number(req.params.user_id);
   if (!pendingTransactions.has(user_id)) {
     return res.status(200).json({message: 'No pending transactions found for this user'});
@@ -78,7 +79,7 @@ app.get('/api/pending_transactions/:user_id', (req, res) => {
 });
 
 //a route to remove the pending transactions when they're settled
-app.delete('/api/pending_transactions/:user_id', (req, res)=>{
+app.delete('/api/pending_transactions/:user_id/', (req, res) => {
   //get the hash from the request body
   const hash = req.body.hash;
   const user_id = Number(req.params.user_id);
@@ -95,6 +96,7 @@ app.delete('/api/pending_transactions/:user_id', (req, res)=>{
   res.status(200).json({message: 'Transaction removed successfully'});
 });
 
-app.listen(port, ()=>{
-	console.log(`server listening at http://localhost:${port}`);
-});
+https.createServer({
+  key: privateKey,
+  cert: certificate
+}, app).listen(port);
