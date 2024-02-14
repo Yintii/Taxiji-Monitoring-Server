@@ -3,7 +3,6 @@ import { fork } from 'child_process'
 import path, { dirname } from 'path'
 import { fileURLToPath } from 'url';
 import cors from 'cors'
-import https from 'https'
 
 const app = express()
 const port = 3000;
@@ -90,6 +89,10 @@ app.delete('/api/pending_transactions/:user_id/', (req, res) => {
   pendingTransactions.set(user_id, updatedTransactions);
   //send a response
   res.status(200).json({message: 'Transaction removed successfully'});
+});
+
+app.get('/', (req, res) => {
+  res.status(200).send('Welcome to the api');
 });
 
 app.listen(port, () => {
