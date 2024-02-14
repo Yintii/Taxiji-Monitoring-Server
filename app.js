@@ -3,11 +3,7 @@ import { fork } from 'child_process'
 import path, { dirname } from 'path'
 import { fileURLToPath } from 'url';
 import cors from 'cors'
-import fs from 'fs'
 import https from 'https'
-
-const privateKey = fs.readFileSync('private.key', 'utf8');
-const certificate = fs.readFileSync('csr.pem', 'utf8');
 
 const app = express()
 const port = 3000;
@@ -96,7 +92,6 @@ app.delete('/api/pending_transactions/:user_id/', (req, res) => {
   res.status(200).json({message: 'Transaction removed successfully'});
 });
 
-https.createServer({
-  key: privateKey,
-  cert: certificate
-}, app).listen(port);
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
