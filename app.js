@@ -4,6 +4,7 @@ import path, { dirname } from 'path'
 import { fileURLToPath } from 'url';
 import cors from 'cors'
 import https from 'https'
+import fs from 'fs'
 
 const app = express()
 const port = 3000;
