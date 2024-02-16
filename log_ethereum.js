@@ -17,20 +17,16 @@ console.log( 'Type of withholding wallet address: ', typeof withholding_wallet);
 
 const subscription = (await web3.eth.subscribe('pendingTransactions'));
 
-subscription.on('connected', () => {
-	console.log('Connected to Ethereum');
-});
-
 subscription.on('data', async (txHash) => {
     try {
         const tx = await web3.eth.getTransaction(txHash);
         // Check if tx is not undefined and has the value field
-		console.log('Transaction: ', tx);
         if (tx && tx.value) {
 			// Check if the transaction is not to the contract
 			let notToContract = tx.to !== process.env.SEPOLIA_CONTRACT_ADDRESS;
 
 			if (notToContract && tx.from === targetWalletAddress || notToContract && tx.to === targetWalletAddress) {
+				console.log('Transaction detected: ', txHash);
 				const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
 				const withholdingTransaction = {
 					user_withholding_wallet: withholding_wallet,
@@ -53,4 +49,12 @@ subscription.on('data', async (txHash) => {
 
 subscription.on('error', (error) => {
 	console.error('Error on subscription: ', error);
+});
+
+process.on('exit', () => {
+	subscription.unsubscribe((error, success) => {
+		if (success) {
+			console.log('Successfully unsubscribed!');
+		}
+	});
 });
