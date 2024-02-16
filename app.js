@@ -19,9 +19,10 @@ app.use(cors());
 
 //create wallet
 app.post('/api/wallet_submit/', (req, res) => {
-  const { wallet_to_monitor, withholding_wallet, user_id, chain } = req.body;
+  const wallet_to_monitor = req.body.wallet;
+  const withholding_wallet = req.body.withholding_wallet;
   console.log('Body: ', req.body);
-  console.log('Received request to start process for wallet: ', wallet_to_monitor, ' for user: ', user_id);
+  console.log('Received request to start process for wallet: ', wallet_to_monitor.wallet_address, ' for user: ', wallet_to_monitor.user_id );
 
   if (!wallet_to_monitor) {
     return res.status(400).send('Please provide a wallet address');
