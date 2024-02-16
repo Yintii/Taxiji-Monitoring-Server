@@ -19,10 +19,12 @@ app.use(cors());
 
 //create wallet
 app.post('/api/wallet_submit/', (req, res) => {
-  const wallet_to_monitor = req.body.wallet.wallet_address.toLowerCase();
+  const wallet_to_monitor = req.body.wallet;
+  const wallet_to_monitor_address = wallet_to_monitor.address;
+  const user = wallet_to_monitor.user_id;
   const withholding_wallet = req.body.withholding_wallet;
   console.log('Body: ', req.body);
-  console.log('Received request to start process for wallet: ', wallet_to_monitor, ' for user: ', req.body.wallet.user_id );
+  console.log('Received request to start process for wallet: ', wallet_to_monitor_address, ' for user: ', user );
 
   if (!wallet_to_monitor) {
     return res.status(400).send('Please provide a wallet address');
@@ -36,23 +38,23 @@ app.post('/api/wallet_submit/', (req, res) => {
   switch(wallet_to_monitor.chain){
     case 'Ethereum':
       console.log('Starting process for Ethereum');
-      process = fork(path.join(__dirname, 'log_ethereum.js'), [wallet_to_monitor, withholding_wallet]);
+      process = fork(path.join(__dirname, 'log_ethereum.js'), [wallet_to_monitor_address, withholding_wallet]);
       break;
     case 'Polygon':
       console.log('Starting process for Polygon');
-      process = fork(path.join(__dirname, 'log_polygon.js'), [wallet_to_monitor, withholding_wallet]);
+      process = fork(path.join(__dirname, 'log_polygon.js'), [wallet_to_monitor_address, withholding_wallet]);
       break;
     case 'Base':
       console.log('Starting process for Base');
-      process = fork(path.join(__dirname, 'log_base.js'), [wallet_to_monitor, withholding_wallet]);
+      process = fork(path.join(__dirname, 'log_base.js'), [wallet_to_monitor_address, withholding_wallet]);
       break;
     case 'Arbitrum':
       console.log('Starting process for Arbitrum');
-      process = fork(path.join(__dirname, 'log_arbitrum.js'), [wallet_to_monitor, withholding_wallet]);
+      process = fork(path.join(__dirname, 'log_arbitrum.js'), [wallet_to_monitor_address, withholding_wallet]);
       break;
     case 'Optimism':
       console.log('Starting process for Optimism');
-      process = fork(path.join(__dirname, 'log_optimism.js'), [wallet_to_monitor, withholding_wallet]);
+      process = fork(path.join(__dirname, 'log_optimism.js'), [wallet_to_monitor_address, withholding_wallet]);
       break;
     default:
       return res.status(400).send('Invalid chain');
