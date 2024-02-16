@@ -33,21 +33,21 @@ app.post('/api/wallet_submit/', (req, res) => {
 
   let process;
 
-  switch(chain){
+  switch(wallet_to_monitor.chain){
     case 'Ethereum':
-      process = fork(path.join(__dirname, 'log_ethereum.js'), [wallet_to_monitor, withholding_wallet]);
+      process = fork(path.join(__dirname, 'log_ethereum.js'), [wallet_to_monitor.wallet_address, withholding_wallet]);
       break;
     case 'Polygon':
-      process = fork(path.join(__dirname, 'log_polygon.js'), [wallet_to_monitor, withholding_wallet]);
+      process = fork(path.join(__dirname, 'log_polygon.js'), [wallet_to_monitor.wallet_address, withholding_wallet]);
       break;
     case 'Base':
-      process = fork(path.join(__dirname, 'log_base.js'), [wallet_to_monitor, withholding_wallet]);
+      process = fork(path.join(__dirname, 'log_base.js'), [wallet_to_monitor.wallet_address, withholding_wallet]);
       break;
     case 'Arbitrum':
-      process = fork(path.join(__dirname, 'log_arbitrum.js'), [wallet_to_monitor, withholding_wallet]);
+      process = fork(path.join(__dirname, 'log_arbitrum.js'), [wallet_to_monitor.wallet_address, withholding_wallet]);
       break;
     case 'Optimism':
-      process = fork(path.join(__dirname, 'log_optimism.js'), [wallet_to_monitor, withholding_wallet]);
+      process = fork(path.join(__dirname, 'log_optimism.js'), [wallet_to_monitor.wallet_address, withholding_wallet]);
       break;
     default:
       return res.status(400).send('Invalid chain');
