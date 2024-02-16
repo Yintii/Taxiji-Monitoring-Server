@@ -20,7 +20,7 @@ app.use(cors());
 //create wallet
 app.post('/api/wallet_submit/', (req, res) => {
   const wallet_to_monitor = req.body.wallet;
-  const wallet_to_monitor_address = wallet_to_monitor.address;
+  const wallet_to_monitor_address = wallet_to_monitor.wallet_address.toLowerCase();
   const user = wallet_to_monitor.user_id;
   const withholding_wallet = req.body.withholding_wallet;
   console.log('Body: ', req.body);
