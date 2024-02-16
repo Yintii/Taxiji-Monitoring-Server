@@ -9,10 +9,10 @@ import fs from 'fs'
 const app = express()
 const port = 3000;
 
-const options = {
-  key: fs.readFileSync('/etc/letsencrypt/live/server.taxolotl.xyz/privkey.pem'),
-  cert: fs.readFileSync('/etc/letsencrypt/live/server.taxolotl.xyz/fullchain.pem')
-};
+//const options = {
+//  key: fs.readFileSync('/etc/letsencrypt/live/server.taxolotl.xyz/privkey.pem'),
+//  cert: fs.readFileSync('/etc/letsencrypt/live/server.taxolotl.xyz/fullchain.pem')
+//};
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -102,6 +102,10 @@ app.get('/', (req, res) => {
   res.status(200).send('Welcome to the api');
 });
 
-https.createServer(options, app).listen(443, () => {
-  console.log('Express server listening on port 443 (HTTPS)');
+app.listen(port, () => {
+	console.log(`Listening on port ${port}`);
 });
+
+//https.createServer(options, app).listen(443, () => {
+//  console.log('Express server listening on port 443 (HTTPS)');
+//});
