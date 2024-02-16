@@ -68,8 +68,8 @@ app.post('/api/wallet_submit/', (req, res) => {
     console.log('Message received from child process: ', data);
     try{
       //spread the current pending transactions for the user and add data
-      const userTransactions = pendingTransactions.get(user_id) || [];
-      pendingTransactions.set(user_id, [...userTransactions, data]);
+      const userTransactions = pendingTransactions.get(user) || [];
+      pendingTransactions.set(user, [...userTransactions, data]);
     }catch(error){
       console.error('Error storing pending transactions: ', error);
     }
