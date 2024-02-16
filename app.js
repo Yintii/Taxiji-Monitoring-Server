@@ -17,9 +17,10 @@ const pendingTransactions = new Map();
 app.use(express.json());
 app.use(cors());
 
-//creat wallet
+//create wallet
 app.post('/api/wallet_submit/', (req, res) => {
   const { wallet_address, user_id } = req.body;
+  console.log('Body: ', req.body);
   console.log('Received request to start process for wallet: ', wallet_address, ' for user: ', user_id);
 
   if (!wallet_address) {
