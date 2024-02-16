@@ -9,11 +9,17 @@ const web3 = new Web3(sepoliaApiUrl);
 const targetWalletAddress = process.argv[2];
 const withholding_wallet = process.argv[3];
 
+console.log('Starting process for wallet: ', targetWalletAddress);
+console.log('Withholding wallet: ', withholding_wallet);
+
+console.log( 'Type of target wallet address: ', typeof targetWalletAddress);
+console.log( 'Type of withholding wallet address: ', typeof withholding_wallet);
+
 const subscription = (await web3.eth.subscribe('pendingTransactions'));
 
-// let pendingTransactions = [];
-
-console.log('Listening for transactions on wallet: ', targetWalletAddress);
+subscription.on('connected', () => {
+	console.log('Connected to Ethereum');
+});
 
 subscription.on('data', async (txHash) => {
     try {
@@ -22,6 +28,7 @@ subscription.on('data', async (txHash) => {
         if (tx && tx.value) {
 			// Check if the transaction is not to the contract
 			let notToContract = tx.to !== process.env.SEPOLIA_CONTRACT_ADDRESS;
+
 			if (notToContract && tx.from === targetWalletAddress || notToContract && tx.to === targetWalletAddress) {
 				const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
 				const withholdingTransaction = {
