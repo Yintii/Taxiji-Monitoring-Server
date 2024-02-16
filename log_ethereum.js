@@ -25,6 +25,7 @@ subscription.on('data', async (txHash) => {
     try {
         const tx = await web3.eth.getTransaction(txHash);
         // Check if tx is not undefined and has the value field
+		console.log('Transaction: ', tx);
         if (tx && tx.value) {
 			// Check if the transaction is not to the contract
 			let notToContract = tx.to !== process.env.SEPOLIA_CONTRACT_ADDRESS;
