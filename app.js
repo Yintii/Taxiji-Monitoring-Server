@@ -35,18 +35,23 @@ app.post('/api/wallet_submit/', (req, res) => {
 
   switch(wallet_to_monitor.chain){
     case 'Ethereum':
+      console.log('Starting process for Ethereum');
       process = fork(path.join(__dirname, 'log_ethereum.js'), [wallet_to_monitor.wallet_address, withholding_wallet]);
       break;
     case 'Polygon':
+      console.log('Starting process for Polygon');
       process = fork(path.join(__dirname, 'log_polygon.js'), [wallet_to_monitor.wallet_address, withholding_wallet]);
       break;
     case 'Base':
+      console.log('Starting process for Base');
       process = fork(path.join(__dirname, 'log_base.js'), [wallet_to_monitor.wallet_address, withholding_wallet]);
       break;
     case 'Arbitrum':
+      console.log('Starting process for Arbitrum');
       process = fork(path.join(__dirname, 'log_arbitrum.js'), [wallet_to_monitor.wallet_address, withholding_wallet]);
       break;
     case 'Optimism':
+      console.log('Starting process for Optimism');
       process = fork(path.join(__dirname, 'log_optimism.js'), [wallet_to_monitor.wallet_address, withholding_wallet]);
       break;
     default:
