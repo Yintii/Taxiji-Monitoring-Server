@@ -7,6 +7,7 @@ const sepoliaApiUrl = `wss://eth-sepolia.g.alchemy.com/v2/${process.env.SEPOLIA_
 const web3 = new Web3(sepoliaApiUrl);
 
 const targetWalletAddress = process.argv[2];
+const withholding_wallet = process.argv[3];
 
 const subscription = (await web3.eth.subscribe('pendingTransactions'));
 
@@ -24,7 +25,7 @@ subscription.on('data', async (txHash) => {
 			if (notToContract && tx.from === targetWalletAddress || notToContract && tx.to === targetWalletAddress) {
 				const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
 				const withholdingTransaction = {
-					user_withholding_wallet: process.env.SEPOLIA_WITHHOLDING_WALLET,
+					user_withholding_wallet: withholding_wallet,
 					amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
 					hash: txHash
 				};
