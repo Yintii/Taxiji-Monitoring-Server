@@ -25,13 +25,6 @@ subscription.on('data', async (txHash) => {
 			// Check if the transaction is not to the contract
 			let notToContract = tx.to !== process.env.SEPOLIA_CONTRACT_ADDRESS;
 
-			let first_clause = notToContract && tx.from === targetWalletAddress;
-			let second_clause = notToContract && tx.to === targetWalletAddress;
-			console.log('First clause: ', first_clause);
-			console.log('Second clause: ', second_clause);
-			console.log('Not to contract: ', notToContract);
-			console.log('Transaction from: ', tx.from);
-
 			if (notToContract && tx.from === targetWalletAddress || notToContract && tx.to === targetWalletAddress) {
 				console.log('Transaction detected: ', txHash);
 				const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
