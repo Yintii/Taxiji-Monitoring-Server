@@ -22,7 +22,7 @@ app.post('/api/wallet_submit/', (req, res) => {
   const wallet_to_monitor = req.body.wallet.wallet_address.toLowerCase();
   const withholding_wallet = req.body.withholding_wallet;
   console.log('Body: ', req.body);
-  console.log('Received request to start process for wallet: ', wallet_to_monitor, ' for user: ', wallet_to_monitor.user_id );
+  console.log('Received request to start process for wallet: ', wallet_to_monitor, ' for user: ', req.body.wallet.user_id );
 
   if (!wallet_to_monitor) {
     return res.status(400).send('Please provide a wallet address');
