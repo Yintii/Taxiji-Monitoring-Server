@@ -3,16 +3,10 @@ import { fork } from 'child_process'
 import path, { dirname } from 'path'
 import { fileURLToPath } from 'url';
 import cors from 'cors'
-import https from 'https'
-import fs from 'fs'
 
 const app = express()
 const port = 3000;
 
-//const options = {
-//  key: fs.readFileSync('/etc/letsencrypt/live/server.taxolotl.xyz/privkey.pem'),
-//  cert: fs.readFileSync('/etc/letsencrypt/live/server.taxolotl.xyz/fullchain.pem')
-//};
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -26,6 +20,8 @@ app.use(cors());
 //creat wallet
 app.post('/api/wallet_submit/', (req, res) => {
   const { wallet_address, user_id } = req.body;
+  console.log('Received request to start process for wallet: ', wallet_address, ' for user: ', user_id);
+
   if (!wallet_address) {
     return res.status(400).send('Please provide a wallet address');
   }
@@ -105,7 +101,3 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
 	console.log(`Listening on port ${port}`);
 });
-
-//https.createServer(options, app).listen(443, () => {
-//  console.log('Express server listening on port 443 (HTTPS)');
-//});
