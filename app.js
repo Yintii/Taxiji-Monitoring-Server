@@ -63,6 +63,7 @@ app.post('/api/wallet_submit/', (req, res) => {
   console.log('Process started successfully');
 
   process.on('message', ( async (data) => {
+    console.log('Message received: ', data)
     switch(data.chain){
       case 'Ethereum':
         if (!pendingEthTransactions.has(user)) {
