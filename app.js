@@ -69,9 +69,14 @@ app.post('/api/wallet_submit/', (req, res) => {
         if (!pendingEthTransactions.has(user)) {
           pendingEthTransactions.set(user, [data]);
         } else {
-          const transactions = pendingEthTransactions.get(user);
-          transactions.push(data);
-          pendingEthTransactions.set(user, transactions);
+          try {
+            const transactions = pendingEthTransactions.get(user);
+            transactions.push(data);
+            pendingEthTransactions.set(user, transactions);
+            console.log('Successfully added transaction to pending transactions list.')
+          } catch (error) {
+            console.error('Error adding transaction to pending transactions list: ', error);
+          }
         }
         break;
       case 'Polygon':
