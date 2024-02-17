@@ -13,6 +13,11 @@ const __dirname = dirname(__filename);
 
 const walletProcesses = new Map();
 const pendingEthTransactions = new Map();
+const pendingPolygonTransactions = new Map();
+const pendingBaseTransactions = new Map();
+const pendingArbitrumTransactions = new Map();
+const pendingOptimismTransactions = new Map();
+
 
 app.use(express.json());
 app.use(cors());
