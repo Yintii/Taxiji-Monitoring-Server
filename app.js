@@ -153,8 +153,8 @@ app.post('/api/wallet_stop/', async (req, res) => {
   console.log('Wallet processes after deleting the process in question: ', walletProcesses);
   //fs.writeFileSync('./processes/wallets_to_monitor.json', JSON.stringify([...walletProcesses]));
 
-  console.log(`Process for ${wallet_to_monitor} stopped successfully`);
-  res.status(200).send(`Process for ${wallet_to_monitor} stopped successfully.`);
+  console.log(`Process for ${wallet_address} stopped successfully`);
+  res.status(200).send(`Process for ${wallet_address} stopped successfully.`);
   }catch (error){
    console.error("There was an error getting rid of the wallet: ", error);	
   }
