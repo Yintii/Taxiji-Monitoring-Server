@@ -65,10 +65,31 @@ app.post('/api/wallet_submit/', (req, res) => {
   const data = {
     wallet: wallet_to_monitor,
     process: process
+  };
+
+  const filePath = './processes/wallets_to_monitor.json';
+
+  // Read existing data from the file
+  let existingData = [];
+  try {
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    existingData = JSON.parse(fileContent);
+  } catch (error) {
+    console.error('Error reading existing data from file:', error);
   }
-  const dataString = JSON.stringify(data);
-  fs.writeFileSync(`./processes/wallets_to_monitor.txt`, dataString);
-  walletProcesses.set(wallet_to_monitor, process);
+
+  // Append new data to the existing data
+  existingData.push(data);
+
+  // Write the updated data to the file
+  try {
+    const dataString = JSON.stringify(existingData);
+    fs.writeFileSync(filePath, dataString);
+    walletProcesses.set(wallet_to_monitor, process);
+    console.log('Process added to the file successfully.');
+  } catch (error) {
+    console.error('Error writing data to file:', error);
+  }
   console.log('Process started successfully');
 
   process.on('message', ( async (data) => {
