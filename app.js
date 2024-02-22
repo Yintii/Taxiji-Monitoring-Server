@@ -1,8 +1,9 @@
 import express from 'express'
 import { fork } from 'child_process'
 import path, { dirname } from 'path'
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from 'url'
 import cors from 'cors'
+import fs from 'fs'
 
 const app = express()
 const port = 3000;
@@ -13,10 +14,6 @@ const __dirname = dirname(__filename);
 
 const walletProcesses = new Map();
 const pendingEthTransactions = new Map();
-const pendingPolygonTransactions = new Map();
-const pendingBaseTransactions = new Map();
-const pendingArbitrumTransactions = new Map();
-const pendingOptimismTransactions = new Map();
 
 
 app.use(express.json());
@@ -64,6 +61,13 @@ app.post('/api/wallet_submit/', (req, res) => {
   }
 
 
+  //write the wallet to monitor and it's process to a file /processes/wallets_to_monitor.txt
+  const data = {
+    wallet: wallet_to_monitor,
+    process: process
+  }
+  const dataString = JSON.stringify(data);
+  fs.writeFileSync(`./processes/wallets_to_monitor.txt`, dataString);
   walletProcesses.set(wallet_to_monitor, process);
   console.log('Process started successfully');
 
