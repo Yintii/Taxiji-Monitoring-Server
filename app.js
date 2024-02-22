@@ -134,24 +134,19 @@ app.post('/api/wallet_submit/', (req, res) => {
 //destroy wallet
 app.post('/api/wallet_stop/', async (req, res) => {
   const { wallet_address } = req.body;
-  console.log('We are attempting to stop wallet: ', wallet_address); 
-  console.log('Wallet Processes: ', walletProcesses);
-  console.log('The wallet address is in the wallet processes: ', !walletProcesses.has(wallet_address));
-
-
   if(!walletProcesses.has(wallet_address)){
    return res.status(400).send('No running process found for this wallet');
   }
 
   try{
-  console.log('Begining of try block');
+
   const process = walletProcesses.get(wallet_address);
  
   process.kill()
 
   walletProcesses.delete(wallet_address);
   console.log('Wallet processes after deleting the process in question: ', walletProcesses);
-  //fs.writeFileSync('./processes/wallets_to_monitor.json', JSON.stringify([...walletProcesses]));
+  fs.writeFileSync('./processes/wallets_to_monitor.json', JSON.stringify([...walletProcesses]));
 
   console.log(`Process for ${wallet_address} stopped successfully`);
   res.status(200).send(`Process for ${wallet_address} stopped successfully.`);
