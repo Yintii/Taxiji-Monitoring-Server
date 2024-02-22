@@ -144,6 +144,7 @@ app.post('/api/wallet_stop/', (req, res) => {
   process.kill()
 
   walletProcesses.delete(wallet_to_monitor);
+  fs.writeFileSync('./processes/wallets_to_monitor.json', JSON.stringify([...walletProcesses]));
 
   console.log(`Process for ${wallet_to_monitor} stopped successfully`);
   res.status(200).send(`Process for ${wallet_to_monitor} stopped successfully.`);
