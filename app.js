@@ -85,7 +85,7 @@ app.post('/api/wallet_submit/', (req, res) => {
   try {
     const dataString = JSON.stringify(existingData);
     fs.writeFileSync(filePath, dataString);
-    walletProcesses.set(wallet_to_monitor, process);
+    walletProcesses.set(wallet_to_monitor.wallet_address, process);
     console.log('Process added to the file successfully.');
   } catch (error) {
     console.error('Error writing data to file:', error);
@@ -137,6 +137,10 @@ app.post('/api/wallet_stop/', async (req, res) => {
   console.log('We are attempting to stop wallet: ', wallet_address); 
   console.log('Wallet Processes: ', walletProcesses);
   console.log('The wallet address is in the wallet processes: ', !walletProcesses.has(wallet_address));
+
+  
+
+
   //if(!walletProcesses.has(wallet_address)){
   //  return res.status(400).send('No running process found for this wallet');
   //}
@@ -186,9 +190,6 @@ app.delete('/api/pending_transactions/:user_id/', (req, res) => {
   res.status(200).json({message: 'Transaction removed successfully'});
 });
 
-app.get('/', (req, res) => {
-  res.status(200).send('Welcome to the api');
-});
 
 app.listen(port, () => {
 	console.log(`Listening on port ${port}`);
