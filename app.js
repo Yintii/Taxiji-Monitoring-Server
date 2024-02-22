@@ -146,8 +146,31 @@ app.post('/api/wallet_stop/', async (req, res) => {
 
   walletProcesses.delete(wallet_address);
   console.log('Wallet processes after deleting the process in question: ', walletProcesses);
-  fs.writeFileSync('./processes/wallets_to_monitor.json', JSON.stringify([...walletProcesses]));
+  
+  //remove the wallet from the file
+  const filePath = './processes/wallets_to_monitor.json';
+  let existingData = [];
+  try {
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    existingData = JSON.parse(fileContent);
+  } catch (error) {
+    console.error('Error reading existing data from file:', error);
+  }
 
+  //filter out the wallet to stop
+  const updatedData = existingData.filter((data) => data.wallet.wallet_address !== wallet_address);
+
+  // Write the updated data to the file
+  try {
+    const dataString = JSON.stringify(updatedData);
+    fs.writeFileSync
+    (filePath, dataString);
+    console.log('Process removed from the file successfully.');
+  }
+  catch (error) {
+    console.error('Error writing data to file:', error);
+  }
+  
   console.log(`Process for ${wallet_address} stopped successfully`);
   res.status(200).send(`Process for ${wallet_address} stopped successfully.`);
   }catch (error){
