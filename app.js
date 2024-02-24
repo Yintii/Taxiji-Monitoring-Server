@@ -167,7 +167,7 @@ app.get('/api/pending_transactions/:user_id/', (req, res) => {
   if (!pendingTransactions.has(user_id)) {
     return res.status(200).json({message: 'No pending transactions found for this user'});
   }
-  const transactions = pendingEthTransactions.get(user_id);
+  const transactions = pendingTransactions.get(user_id);
   res.status(200).json(transactions);
 });
 
@@ -177,14 +177,14 @@ app.delete('/api/pending_transactions/:user_id/', (req, res) => {
   const hash = req.body.hash;
   const user_id = Number(req.params.user_id);
   console.log('Received request to remove transaction with hash: ', hash, ' for user: ', user_id);
-  if (!pendingEthTransactions.has(user_id)) {
+  if (!pendingTransactions.has(user_id)) {
     return res.status(200).json({message: 'No pending transactions found for this user'});
   }
-  const transactions = pendingEthTransactions.get(user_id);
+  const transactions = pendingTransactions.get(user_id);
   //filter out the transaction with the hash
   const updatedTransactions = transactions.filter((transaction) => transaction.hash !== hash);
   //update the pending transactions map
-  pendingEthTransactions.set(user_id, updatedTransactions);
+  pendingTransactions.set(user_id, updatedTransactions);
   //send a response
   res.status(200).json({message: 'Transaction removed successfully'});
 });
