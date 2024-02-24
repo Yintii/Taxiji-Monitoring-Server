@@ -13,8 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const walletProcesses = new Map();
-const pendingEthTransactions = new Map();
-const pendingPolygonTransactions = new Map();
+const pendingTransactions = new Map();
 
 
 app.use(express.json());
@@ -95,50 +94,19 @@ app.post('/api/wallet_submit/', (req, res) => {
 
   process.on('message', ( async (data) => {
     console.log('Message received: ', data)
-    switch(data.chain){
-      case 'Ethereum':
-        console.log('Received transaction for Ethereum: ', data);
-        if (!pendingEthTransactions.has(user)) {
-          pendingEthTransactions.set(user, [data]);
-          console.log('Successfully added transaction to pending transactions list.')
-        } else {
-          try {
-            const transactions = pendingEthTransactions.get(user);
-            transactions.push(data);
-            pendingEthTransactions.set(user, transactions);
-            console.log('Successfully added transaction to pending transactions list.')
-          } catch (error) {
-            console.error('Error adding transaction to pending transactions list: ', error);
-          }
-        }
-        break;
-      case 'Polygon':
-        console.log('Received transaction for Polygon: ', data);
-        if (!pendingPolygonTransactions.has(user)) {
-          pendingPolygonTransactions.set(user, [data]);
-          console.log('Successfully added transaction to pending transactions list.')
-        } else {
-          try {
-            const transactions = pendingPolygonTransactions.get(user);
-            transactions.push(data);
-            pendingPolygonTransactions.set(user, transactions);
-            console.log('Successfully added transaction to pending transactions list.')
-          } catch (error) {
-            console.error('Error adding transaction to pending transactions list: ', error);
-          }
-        }
-        break;
-      case 'Base':
-        //pendingBaseTransactions.push(data);
-        break;
-      case 'Arbitrum':
-        //pendingArbitrumTransactions.push(data);
-        break;
-      case 'Optimism':
-        //pendingOptimismTransactions.push(data);
-        break;
-      default:
-        console.log('Invalid chain');
+    console.log('Received transaction: ', data);
+    if (!pendingTransactions.has(user)) {
+      pendingTransactions.set(user, [data]);
+      console.log('Successfully added transaction to pending transactions list.')
+    } else {
+      try {
+        const transactions = pendingTransactions.get(user);
+        transactions.push(data);
+        pendingTransactions.set(user, transactions);
+        console.log('Successfully added transaction to pending transactions list.')
+      } catch (error) {
+        console.error('Error adding transaction to pending transactions list: ', error);
+      }
     }
   }));
 
@@ -195,22 +163,11 @@ app.post('/api/wallet_stop/', async (req, res) => {
 //a simple route that will show what the pending transactions are
 app.get('/api/pending_transactions/:user_id/', (req, res) => {
   const user_id = Number(req.params.user_id);
-
-  const anyPendingTransactions = pendingEthTransactions.has(user_id) || pendingPolygonTransactions.has(user_id);
-
-  if (!anyPendingTransactions) {
+  
+  if (!pendingTransactions.has(user_id)) {
     return res.status(200).json({message: 'No pending transactions found for this user'});
   }
-
-  const ethTransactions = pendingEthTransactions.get(user_id);
-  const polygonTransactions = pendingPolygonTransactions.get(user_id);
-
-  const transactions = {
-    ethereum: ethTransactions,
-    polygon: polygonTransactions
-  };
-
-  // const transactions = pendingEthTransactions.get(user_id);
+  const transactions = pendingEthTransactions.get(user_id);
   res.status(200).json(transactions);
 });
 
@@ -220,20 +177,14 @@ app.delete('/api/pending_transactions/:user_id/', (req, res) => {
   const hash = req.body.hash;
   const user_id = Number(req.params.user_id);
   console.log('Received request to remove transaction with hash: ', hash, ' for user: ', user_id);
-
-  const anyPendingTransactions = pendingEthTransactions.has(user_id) || pendingPolygonTransactions.has(user_id);
-
-  if (!anyPendingTransactions){
+  if (!pendingEthTransactions.has(user_id)) {
     return res.status(200).json({message: 'No pending transactions found for this user'});
   }
-
-  //find the entry that has the hash between the ethereum and polygon transactions
-  let ethTransactions = pendingEthTransactions.get(user_id).filter((transaction) => transaction.hash !== hash);
-  let polygonTransactions = pendingPolygonTransactions.get(user_id).filter((transaction) => transaction.hash !== hash);
-
+  const transactions = pendingEthTransactions.get(user_id);
+  //filter out the transaction with the hash
+  const updatedTransactions = transactions.filter((transaction) => transaction.hash !== hash);
   //update the pending transactions map
-  pendingEthTransactions.set(user_id, ethTransactions);
-  pendingPolygonTransactions.set(user_id, polygonTransactions);
+  pendingEthTransactions.set(user_id, updatedTransactions);
   //send a response
   res.status(200).json({message: 'Transaction removed successfully'});
 });

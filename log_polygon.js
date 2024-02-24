@@ -32,7 +32,7 @@ subscription.on('data', async (txHash) => {
                     user_withholding_wallet: withholding_wallet,
                     amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
                     hash: txHash,
-                    chain: 'Ethereum'
+                    chain: 'Polygon'
                 };
                 try {
                     //pendingTransactions.push(withholdingTransaction);
