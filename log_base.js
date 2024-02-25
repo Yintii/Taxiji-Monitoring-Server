@@ -3,8 +3,8 @@ import { ethers } from 'ethers';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const arbsepApiUrl = `wss://arb-sepolia.g.alchemy.com/v2/${process.env.ARBSEP_API_KEY}`;
-const web3 = new Web3(arbsepApiUrl);
+const baseSepApiUrl = `wss://base-sepolia.g.alchemy.com/v2/${process.env.BASESEP_API_KEY}`;
+const web3 = new Web3(baseSepApiUrl);
 
 const targetWalletAddress = process.argv[2];
 const withholding_wallet = process.argv[3];
@@ -32,7 +32,7 @@ subscription.on('data', async (txHash) => {
                     user_withholding_wallet: withholding_wallet,
                     amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
                     hash: txHash,
-                    chain: 'Arbitrum'
+                    chain: 'Base'
                 };
                 try {
                     //pendingTransactions.push(withholdingTransaction);
