@@ -12,13 +12,9 @@ const withholding_wallet = process.argv[3];
 console.log('Starting process for wallet: ', targetWalletAddress);
 console.log('Withholding wallet: ', withholding_wallet);
 
+const subscription = (await web3.eth.subscribe('newBlockHeaders'));
 
-
-
-
-
-const subscription = (await web3.eth.subscribe('newBlockHeaders'))
-    .on('data', async (blockHeader) => {
+subscription.on('data', async (blockHeader) => {
         try {
             const block = await web3.eth.getBlock(blockHeader.number, true);
             block.transactions.forEach((tx) => {
