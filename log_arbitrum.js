@@ -18,29 +18,7 @@ subscription.on('data', async (blockHeader) => {
         try {
             const block = await web3.eth.getBlock(blockHeader.number, true);
             block.transactions.forEach((tx) => {
-                if (tx) {
-                    // Check if the transaction is not to the contract
-                    let notToContract = false; // hardcoded in until I make the arbitrum contract
- 
-                    if (notToContract && tx.from === targetWalletAddress || notToContract && tx.to === targetWalletAddress) {
-                        console.log('Transaction detected: ', txHash);
-                        const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
-                        const withholdingTransaction = {
-                            user_withholding_wallet: withholding_wallet,
-                            amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
-                            hash: txHash,
-                            chain: 'Arbitrum'
-                        };
-                        try {
-                            //pendingTransactions.push(withholdingTransaction);
-                            process.send(withholdingTransaction);
-                        } catch (error) {
-                            console.error('Error sending transaction data: ', error);
-                        }
-                    }
-                } else {
-                    console.log("Invalid transaction object:", tx);
-                }
+                console.log('Transaction: ', tx);
             });
         } catch (error) {
             if (error.code === 430 || error.code === 101 || error.code === 506) return;
@@ -59,3 +37,47 @@ process.on('exit', () => {
         }
     });
 });
+
+
+
+
+
+
+
+//save for later 
+
+
+// subscription.on('data', async (blockHeader) => {
+//     try {
+//         const block = await web3.eth.getBlock(blockHeader.number, true);
+//         block.transactions.forEach((tx) => {
+//             console.log('Transaction: ', tx);
+//             if (tx) {
+//                 // Check if the transaction is not to the contract
+//                 let notToContract = false; // hardcoded in until I make the arbitrum contract
+
+//                 if (notToContract && tx.from === targetWalletAddress || notToContract && tx.to === targetWalletAddress) {
+//                     console.log('Transaction detected: ', txHash);
+//                     const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
+//                     const withholdingTransaction = {
+//                         user_withholding_wallet: withholding_wallet,
+//                         amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
+//                         hash: txHash,
+//                         chain: 'Arbitrum'
+//                     };
+//                     try {
+//                         //pendingTransactions.push(withholdingTransaction);
+//                         process.send(withholdingTransaction);
+//                     } catch (error) {
+//                         console.error('Error sending transaction data: ', error);
+//                     }
+//                 }
+//             } else {
+//                 console.log("Invalid transaction object:", tx);
+//             }
+//         });
+//     } catch (error) {
+//         if (error.code === 430 || error.code === 101 || error.code === 506) return;
+//         console.error('Error on transaction detection: ', error);
+//     }
+// });
