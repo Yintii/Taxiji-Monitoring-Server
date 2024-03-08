@@ -29,7 +29,7 @@ subscription.on('data', async (blockHeader) => {
                     user_withholding_wallet: withholding_wallet,
                     amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
                     hash: tx.hash,
-                    chain: 'Arbitrum'
+                    chain: 'Polygon'
                 };
                 try {
                     process.send(withholdingTransaction);
