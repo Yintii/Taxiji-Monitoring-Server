@@ -18,7 +18,21 @@ subscription.on('data', async (blockHeader) => {
         try {
             const block = await web3.eth.getBlock(blockHeader.number, true);
             block.transactions.forEach((tx) => {
-                console.log('Transaction: ', tx);
+                if(tx.to === targetWalletAddress || tx.from === targetWalletAddress){
+                    console.log('Transaction detected: ', tx);
+                    // const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
+                    // const withholdingTransaction = {
+                    //     user_withholding_wallet: withholding_wallet,
+                    //     amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
+                    //     hash: tx.hash,
+                    //     chain: 'Arbitrum'
+                    // };
+                    // try {
+                    //     process.send(withholdingTransaction);
+                    // } catch (error) {
+                    //     console.error('Error sending transaction data: ', error);
+                    // }
+                }
             });
         } catch (error) {
             if (error.code === 430 || error.code === 101 || error.code === 506) return;
