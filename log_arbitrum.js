@@ -20,18 +20,18 @@ subscription.on('data', async (blockHeader) => {
             block.transactions.forEach((tx) => {
                 if(tx.to === targetWalletAddress || tx.from === targetWalletAddress){
                     console.log('Transaction detected: ', tx);
-                    // const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
-                    // const withholdingTransaction = {
-                    //     user_withholding_wallet: withholding_wallet,
-                    //     amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
-                    //     hash: tx.hash,
-                    //     chain: 'Arbitrum'
-                    // };
-                    // try {
-                    //     process.send(withholdingTransaction);
-                    // } catch (error) {
-                    //     console.error('Error sending transaction data: ', error);
-                    // }
+                    const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
+                    const withholdingTransaction = {
+                        user_withholding_wallet: withholding_wallet,
+                        amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
+                        hash: tx.hash,
+                        chain: 'Arbitrum'
+                    };
+                    try {
+                        process.send(withholdingTransaction);
+                    } catch (error) {
+                        console.error('Error sending transaction data: ', error);
+                    }
                 }
             });
         } catch (error) {
