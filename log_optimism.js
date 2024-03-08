@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const optsepApiUrl = `wws://opt-sepolia.g.alchemy.com/v2/${process.env.OPTSEP_API_KEY}`;
+const optsepApiUrl = `wss://opt-sepolia.g.alchemy.com/v2/${process.env.OPTSEP_API_KEY}`;
 const web3 = new Web3(optsepApiUrl);
 
 const targetWalletAddress = process.argv[2];
