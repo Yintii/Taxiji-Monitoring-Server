@@ -18,7 +18,7 @@ subscription.on('data', async (blockHeader) => {
         try {
             const block = await web3.eth.getBlock(blockHeader.number, true);
             block.transactions.forEach((tx) => {
-                if (tx && tx.value) {
+                if (tx) {
                     // Check if the transaction is not to the contract
                     let notToContract = false; // hardcoded in until I make the arbitrum contract
  
