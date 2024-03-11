@@ -22,12 +22,14 @@ subscription.on('data', async (blockHeader) => {
 		
 		const block = await web3.eth.getBlock(blockHeader.number, true);
 
-		const transactions = block.transactions.filter((tx) => tx.to === targetWalletAddress || tx.from === targetWalletAddress);
+		const transaction = block.transactions.filter((tx) => tx.to === targetWalletAddress || tx.from === targetWalletAddress);
 
-		if (transactions.length === 0) return;
-		console.log('Transaction(s) detected: ', transactions);
+		if (transaction.length === 0) return;
+		console.log('Transaction detected: ', transaction);
 
-		const value = transactions.reduce((acc, tx) => acc + parseInt(tx.value), 0);
+		const value = parseInt(transaction[0].value);
+
+		console.log('Value of transaction: ', value);
 
 		const withholdingAmt = ethers.formatEther(BigInt(value) * BigInt(2) / BigInt(10));
 		const withholdingTransaction = {
