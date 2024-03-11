@@ -19,10 +19,15 @@ const subscription = (await web3.eth.subscribe('newBlockHeaders'));
 
 subscription.on('data', async (blockHeader) => {
 	try {
-		const block = await web3.eth.getBlock(blockHeader.number, true);
-		const targetWalletProof = block.transactionsRoot;
-		//web3.eth.getProof(address, storageKey, blockNumber, [callback])
-		const proof = await web3.eth.getProof(targetWalletAddress, targetWalletProof, blockHeader.number, ()=>{
+		const storageKeys = web3.eth.getStorageAt(targetWalletAddress, 0, blockHeader.number, (error, result) => {
+			if (error) {
+				console.error('Error getting storage: ', error);
+			} else {
+				console.log('Storage at 0: ', result);
+			}
+		});
+		//web3.eth.getProof(address, storageKeysArray, blockNumber, [callback])
+		const proof = await web3.eth.getProof(targetWalletAddress, storageKeys, blockHeader.number, ()=>{
 			console.log('Proof received');
 		});
 		const isTargetWalletIncluded = web3.eth.verifyProof(proof);
