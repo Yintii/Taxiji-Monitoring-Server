@@ -20,23 +20,31 @@ const subscription = (await web3.eth.subscribe('newBlockHeaders'));
 subscription.on('data', async (blockHeader) => {
 	try {
 		const block = await web3.eth.getBlock(blockHeader.number, true);
-		block.transactions.forEach((tx) => {
-			if (tx.to === targetWalletAddress || tx.from === targetWalletAddress) {
-				console.log('Transaction detected: ', tx);
-				const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
-				const withholdingTransaction = {
-					user_withholding_wallet: withholding_wallet,
-					amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
-					hash: tx.hash,
-					chain: 'Ethereum'
-				};
-				try {
-					process.send(withholdingTransaction);
-				} catch (error) {
-					console.error('Error sending transaction data: ', error);
-				}
+		
+		//use a merkle proof to check if the target wallet address is in the block
+		//if it is, console.log the block number and the transaction hash
+		const merkleProof = await web3.eth.getBlock(blockHeader.number, true);
+		if(merkleProof.transactionsRoot === targetWalletAddress){
+			console.log('Transaction detected: ', block.transactions);
+			//then find the transaction and the amount of the transaction from the hash
+			const transaction = await web3.eth.getTransaction(block.transactions);
+			const withholdingAmt = ethers.formatEther(BigInt(transaction.value) * BigInt(2) / BigInt(10));
+			const withholdingTransaction = {
+				user_withholding_wallet: withholding_wallet,
+				amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
+				hash: transaction.hash,
+				chain: 'Ethereum'
+			};
+
+			try {
+				process.send(withholdingTransaction);
 			}
-		});
+			catch (error) {
+				console.error('Error sending transaction data: ', error);
+			}	
+		}else{
+			return;
+		}
 	} catch (error) {
 		if (error.code === 430 || error.code === 101 || error.code === 506) return;
 		console.error('Error on transaction detection: ', error);
@@ -53,3 +61,24 @@ process.on('exit', () => {
 		}
 	});
 });
+
+
+
+
+// block.transactions.forEach((tx) => {
+// 	if (tx.to === targetWalletAddress || tx.from === targetWalletAddress) {
+// 		console.log('Transaction detected: ', tx);
+// 		const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
+// 		const withholdingTransaction = {
+// 			user_withholding_wallet: withholding_wallet,
+// 			amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
+// 			hash: tx.hash,
+// 			chain: 'Ethereum'
+// 		};
+// 		try {
+// 			process.send(withholdingTransaction);
+// 		} catch (error) {
+// 			console.error('Error sending transaction data: ', error);
+// 		}
+// 	}
+// });
