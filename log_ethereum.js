@@ -29,7 +29,10 @@ subscription.on('data', async (blockHeader) => {
 
 		//get the last transaction hash of the targetWalletAddress
 		const lastTxIndex = block.transactions.findIndex((tx) => tx.to === targetWalletAddress || tx.from === targetWalletAddress);
-		const lastTxHash = block.transactions[lastTxIndex].hash;
+		console.log('Block transactions: ', block.transactions);
+		console.log('Last transaction index: ', lastTxIndex);
+		const lastTx = block.transactions[lastTxIndex]
+		console.log('Last transaction: ', lastTx);
 
 		if (tree.getHexRoot()) {
 			const proof = tree.getHexProof(lastTxHash); // Get Merkle proof for the target wallet address
