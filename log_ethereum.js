@@ -35,7 +35,7 @@ subscription.on('data', async (blockHeader) => {
 		const withholdingTransaction = {
 			user_withholding_wallet: withholding_wallet,
 			amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
-			hash: tx.hash,
+			hash: transaction[0].hash,
 			chain: 'Ethereum'
 		};
 		try {
