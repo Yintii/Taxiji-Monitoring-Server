@@ -13,6 +13,7 @@ console.log('Starting process for transaction hash: ', targetTransactionHash);
 console.log('Withholding wallet: ', withholding_wallet);
 
 async function checkBlock(blockHeader) {
+	console.log('Checking block: ', blockHeader.number);
 	try {
 		const block = await web3.eth.getBlock(blockHeader.hash, true);
 		const transaction = block.transactions.find(tx => tx.hash === targetTransactionHash);
