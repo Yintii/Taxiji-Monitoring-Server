@@ -23,9 +23,8 @@ subscription.on('data', async (blockHeader) => {
 	try {
 
 		let transactionCount = await (web3.eth.getTransactionCount(targetWalletAddress));
-		let transactionCountInt = parseInt(transactionCount);
-		let lastTxHash = (await web3.eth.getTransactionCount(targetWalletAddress) > 0) ? (await web3.eth.getTransactionFromBlock('latest', transactionCountInt - 1)).hash : null;
-		lastTxHash = parseInt(lastTxHash);
+		let lastTx = (await web3.eth.getTransaction(targetWalletAddress, transactionCount - 1));
+		console.log('Last transaction: ', lastTx);
 
 		if (tree.getHexRoot()) {
 			const proof = tree.getHexProof(lastTxHash); // Get Merkle proof for the target wallet address
