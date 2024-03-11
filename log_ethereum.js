@@ -21,18 +21,12 @@ const subscription = await (web3.eth.subscribe('newBlockHeaders'));
 
 subscription.on('data', async (blockHeader) => {
 	try {
-		
-		const block = await web3.eth.getBlock(blockHeader.number, true);
-		const leaves = block.transactions.map((tx) => tx.hash);
 
-		const tree = new MerkleTree(leaves, SHA256, { sort: true });
 
 		//get the last transaction hash of the targetWalletAddress
-		const lastTxIndex = block.transactions.findIndex((tx) => tx.to === targetWalletAddress || tx.from === targetWalletAddress);
-		console.log('Block transactions: ', block.transactions);
-		console.log('Last transaction index: ', lastTxIndex);
-		const lastTx = block.transactions[lastTxIndex]
-		console.log('Last transaction: ', lastTx);
+		const lastTxHash = await web3.eth.getStorageAt(targetWalletAddress, 0);
+		console.log('Last transaction hash: ', lastTxHash);
+		
 
 		if (tree.getHexRoot()) {
 			const proof = tree.getHexProof(lastTxHash); // Get Merkle proof for the target wallet address
