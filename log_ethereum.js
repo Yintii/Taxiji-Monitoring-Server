@@ -16,7 +16,7 @@ console.log('Withholding wallet: ', withholding_wallet);
 console.log( 'Type of target wallet address: ', typeof targetWalletAddress);
 console.log( 'Type of withholding wallet address: ', typeof withholding_wallet);
 
-const subscription = web3.eth.subscribe('newBlockHeaders');
+const subscription = await (web3.eth.subscribe('newBlockHeaders'));
 
 subscription.on('data', async (blockHeader) => {
 	try {
