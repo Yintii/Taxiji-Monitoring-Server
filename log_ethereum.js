@@ -21,7 +21,10 @@ subscription.on('data', async (blockHeader) => {
 	try {
 		const block = await web3.eth.getBlock(blockHeader.number, true);
 		const targetWalletProof = block.transactionsRoot;
-		const proof = await web3.eth.getTransactionReceiptProof(targetWalletProof, targetWalletAddress);
+		//web3.eth.getProof(address, storageKey, blockNumber, [callback])
+		const proof = await web3.eth.getProof(targetWalletAddress, targetWalletProof, blockHeader.number, ()=>{
+			console.log('Proof received');
+		});
 		const isTargetWalletIncluded = web3.eth.verifyProof(proof);
 		if (isTargetWalletIncluded) {
 			console.log('Success: Target wallet address is included in the block header');
