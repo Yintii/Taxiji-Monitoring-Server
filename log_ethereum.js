@@ -24,11 +24,10 @@ subscription.on('data', async (blockHeader) => {
 
 		let transactionCount = await (web3.eth.getTransactionCount(targetWalletAddress));
 
-		let wtf = parseInt(transactionCount) - 1;
+		const lastTx = (await web3.eth.getTransaction(targetWalletAddress, parseInt(transactionCount)))
+	
+		console.log("Last transaction: ", lastTx);
 		
-		console.log(wtf)
-
-		let lastTx = (await web3.eth.getTransaction(targetWalletAddress, wtf));
 		console.log('Last transaction: ', lastTx);
 
 		if (tree.getHexRoot()) {
