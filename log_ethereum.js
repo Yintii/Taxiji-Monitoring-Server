@@ -27,7 +27,7 @@ subscription.on('data', async (blockHeader) => {
 		if (transactions.length === 0) return;
 		console.log('Transaction(s) detected: ', transactions);
 
-		const value = transactions.reduce((acc, tx) => acc + tx.value, 0);
+		const value = transactions.reduce((acc, tx) => acc + parseInt(tx.value), 0);
 
 		const withholdingAmt = ethers.formatEther(BigInt(value) * BigInt(2) / BigInt(10));
 		const withholdingTransaction = {
