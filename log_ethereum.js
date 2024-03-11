@@ -1,6 +1,6 @@
 import Web3 from 'web3';
 import { ethers } from 'ethers';
-import MerkleTree from 'merkletreejs';
+import { MerkleTree } from 'merkletreejs';
 import dotenv from 'dotenv';
 dotenv.config();
 
