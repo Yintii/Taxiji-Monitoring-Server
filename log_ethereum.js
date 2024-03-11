@@ -1,6 +1,7 @@
 import Web3 from 'web3';
 import { ethers } from 'ethers';
 import { MerkleTree } from 'merkletreejs';
+import { SHA256 } from 'crypto-js';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -20,12 +21,18 @@ const subscription = await (web3.eth.subscribe('newBlockHeaders'));
 
 subscription.on('data', async (blockHeader) => {
 	try {
+		
 		const block = await web3.eth.getBlock(blockHeader.number, true);
-		const leaves = block.transactions.map(tx => tx.hash); // Construct leaves from transaction hashes
-		const tree = new MerkleTree(leaves);
+		const leaves = block.transactions.map((tx) => tx.hash);
+
+		const tree = new MerkleTree(leaves, SHA256, { sort: true });
+
+		//get the last transaction hash of the targetWalletAddress
+		const lastTxIndex = block.transactions.findIndex((tx) => tx.to === targetWalletAddress || tx.from === targetWalletAddress);
+		const lastTxHash = block.transactions[lastTxIndex].hash;
 
 		if (tree.getHexRoot()) {
-			const proof = tree.getHexProof(targetWalletAddress); // Get Merkle proof for the target wallet address
+			const proof = tree.getHexProof(lastTxHash); // Get Merkle proof for the target wallet address
 
 			if (tree.verify(proof, targetWalletAddress, tree.getRoot())) { // Verify proof
 				console.log('Transaction involving target wallet detected in block: ', blockHeader.number);
