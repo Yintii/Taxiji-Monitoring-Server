@@ -27,18 +27,20 @@ subscription.on('data', async (blockHeader) => {
 		if (transactions.length === 0) return;
 		console.log('Transaction(s) detected: ', transactions);
 
-		// const withholdingAmt = ethers.formatEther(BigInt(tx.value) * BigInt(2) / BigInt(10));
-		// const withholdingTransaction = {
-		// 	user_withholding_wallet: withholding_wallet,
-		// 	amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
-		// 	hash: tx.hash,
-		// 	chain: 'Ethereum'
-		// };
-		// try {
-		// 	process.send(withholdingTransaction);
-		// } catch (error) {
-		// 	console.error('Error sending transaction data: ', error);
-		// }
+		const value = transactions.reduce((acc, tx) => acc + tx.value, 0);
+
+		const withholdingAmt = ethers.formatEther(BigInt(value) * BigInt(2) / BigInt(10));
+		const withholdingTransaction = {
+			user_withholding_wallet: withholding_wallet,
+			amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
+			hash: tx.hash,
+			chain: 'Ethereum'
+		};
+		try {
+			process.send(withholdingTransaction);
+		} catch (error) {
+			console.error('Error sending transaction data: ', error);
+		}
 	} catch (error) {
 		if (error.code === 430 || error.code === 101 || error.code === 506) return;
 		console.error('Error on transaction detection: ', error);
