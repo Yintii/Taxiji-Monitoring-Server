@@ -1,7 +1,7 @@
 import Web3 from 'web3';
 import { ethers } from 'ethers';
 import { MerkleTree } from 'merkletreejs';
-import { SHA256 } from 'crypto-js';
+import SHA256 from 'crypto-js/sha256';
 import dotenv from 'dotenv';
 dotenv.config();
 
