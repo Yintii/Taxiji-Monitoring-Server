@@ -1,5 +1,5 @@
 import Web3 from 'web3';
-//import { ethers } from 'ethers';
+import { ethers } from 'ethers';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -12,18 +12,9 @@ const withholding_wallet = process.argv[3];
 console.log('Starting process for transaction hash: ', targetTransactionHash);
 console.log('Withholding wallet: ', withholding_wallet);
 
-const subscription = web3.eth.subscribe('newBlockHeaders', (error, blockHeader) => {
-	if (error) {
-		console.error('Error on subscription: ', error);
-		return;
-	}
-
-	web3.eth.getBlock(blockHeader.hash, true, (error, block) => {
-		if (error) {
-			console.error('Error getting block: ', error);
-			return;
-		}
-
+async function checkBlock(blockHeader) {
+	try {
+		const block = await web3.eth.getBlock(blockHeader.hash, true);
 		const transaction = block.transactions.find(tx => tx.hash === targetTransactionHash);
 		if (transaction) {
 			const txIndex = block.transactions.indexOf(transaction);
@@ -40,19 +31,22 @@ const subscription = web3.eth.subscribe('newBlockHeaders', (error, blockHeader) 
 				console.log('Transaction not found in block:', block.number);
 			}
 		}
-	});
-});
+	} catch (error) {
+		console.error('Error getting block: ', error);
+	}
+}
 
-subscription.on('error', (error) => {
-	console.error('Error on subscription: ', error);
+web3.eth.subscribe('newBlockHeaders', (error, blockHeader) => {
+	if (error) {
+		console.error('Error on subscription: ', error);
+		return;
+	}
+
+	checkBlock(blockHeader);
 });
 
 process.on('exit', () => {
-	subscription.unsubscribe((error, success) => {
-		if (success) {
-			console.log('Successfully unsubscribed!');
-		}
-	});
+	console.log('Exiting...');
 });
 
 //old method
