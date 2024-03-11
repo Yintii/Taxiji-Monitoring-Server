@@ -17,6 +17,7 @@
     "express": "^4.18.2",
     "expressjs": "^1.0.1",
     "http": "^0.0.1-security",
+    "keccak": "^3.0.4",
     "merkletreejs": "^0.3.11",
     "nvm": "^0.0.4",
     "pm2": "^5.3.1",
