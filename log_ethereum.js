@@ -1,6 +1,8 @@
 import Web3 from 'web3';
 import { ethers } from 'ethers';
 import dotenv from 'dotenv';
+import { MerkleTree } from 'merkletreejs';
+import keccak from 'keccak';
 dotenv.config();
 
 const sepoliaApiUrl = `wss://eth-sepolia.g.alchemy.com/v2/${process.env.SEPOLIA_API_KEY}`;
@@ -12,50 +14,56 @@ const withholding_wallet = process.argv[3];
 console.log('Starting process for wallet: ', targetWalletAddress);
 console.log('Withholding wallet: ', withholding_wallet);
 
-console.log( 'Type of target wallet address: ', typeof targetWalletAddress);
-console.log( 'Type of withholding wallet address: ', typeof withholding_wallet);
+console.log('Type of target wallet address: ', typeof targetWalletAddress);
+console.log('Type of withholding wallet address: ', typeof withholding_wallet);
 
-const subscription = (await web3.eth.subscribe('newBlockHeaders'));
-
-subscription.on('data', async (blockHeader) => {
+async function checkBlock(blockHeader) {
 	try {
-		const storageKeys = web3.eth.getStorageAt(targetWalletAddress, 0, blockHeader.number, (error, result) => {
-			if (error) {
-				console.error('Error getting storage: ', error);
-			} else {
-				console.log('Storage at 0: ', result);
-			}
-		});
-		//web3.eth.getProof(address, storageKeysArray, blockNumber, [callback])
-		const proof = await web3.eth.getProof(targetWalletAddress, storageKeys, blockHeader.number, ()=>{
-			console.log('Proof received');
-		});
-		const isTargetWalletIncluded = web3.eth.verifyProof(proof);
-		if (isTargetWalletIncluded) {
-			console.log('Success: Target wallet address is included in the block header');
-		} else {
-			console.log('Target wallet address is not included in the block header');
+		const block = await web3.eth.getBlock(blockHeader.number, true);
+
+		// Use a Merkle tree to check if the target wallet address is in the block
+		const leaves = block.transactions.map(tx => tx.to); // Assuming we want to check the "to" address
+		const tree = new MerkleTree(leaves, keccak);
+		const rootHash = tree.getRoot().toString('hex');
+
+		if (rootHash === targetWalletAddress)
+			console.log('Transaction detected in block:', blockHeader.number);
+		
+
+		// Then find the transaction and the amount of the transaction from the hash
+		let transaction = block.transactions.filter(async tx => tx.to === targetWalletAddress || tx.from === targetWalletAddress);
+
+		console.log('Transaction detected: ', transaction);
+		const withholdingAmt = ethers.formatEther(BigInt(transaction.value) * BigInt(2) / BigInt(10));
+		const withholdingTransaction = {
+			user_withholding_wallet: withholding_wallet,
+			amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
+			hash: transaction.hash,
+			chain: 'Ethereum'
+		};
+		try {
+			process.send(withholdingTransaction);
+		} catch (error) {
+			console.error('Error sending transaction data: ', error);
 		}
-
-
+		
 	} catch (error) {
-		if (error.code === 430 || error.code === 101 || error.code === 506) return;
 		console.error('Error on transaction detection: ', error);
 	}
-});
-subscription.on('error', (error) => {
-	console.error('Error on subscription: ', error);
+}
+
+web3.eth.subscribe('newBlockHeaders', (error, blockHeader) => {
+	if (error) {
+		console.error('Error on subscription: ', error);
+		return;
+	}
+
+	checkBlock(blockHeader);
 });
 
 process.on('exit', () => {
-	subscription.unsubscribe((error, success) => {
-		if (success) {
-			console.log('Successfully unsubscribed!');
-		}
-	});
+	console.log('Exiting...');
 });
-
-
 
 
 // block.transactions.forEach((tx) => {
