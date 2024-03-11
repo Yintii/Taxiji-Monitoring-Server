@@ -22,7 +22,7 @@ const subscription = await (web3.eth.subscribe('newBlockHeaders'));
 subscription.on('data', async (blockHeader) => {
 	try {
 
-		let transactionCount = web3.eth.getTransactionCount(targetWalletAddress)
+		let transactionCount = await (web3.eth.getTransactionCount(targetWalletAddress));
 		console.log('Transaction Count: ', transactionCount);
 
 		if (tree.getHexRoot()) {
