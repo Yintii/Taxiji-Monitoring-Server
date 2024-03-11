@@ -20,31 +20,16 @@ const subscription = (await web3.eth.subscribe('newBlockHeaders'));
 subscription.on('data', async (blockHeader) => {
 	try {
 		const block = await web3.eth.getBlock(blockHeader.number, true);
-		
-		//use a merkle proof to check if the target wallet address is in the block
-		//if it is, console.log the block number and the transaction hash
-		const merkleProof = await web3.eth.getBlock(blockHeader.number, true);
-		if(merkleProof.transactionsRoot === targetWalletAddress){
-			console.log('Transaction detected: ', block.transactions);
-			//then find the transaction and the amount of the transaction from the hash
-			const transaction = await web3.eth.getTransaction(block.transactions);
-			const withholdingAmt = ethers.formatEther(BigInt(transaction.value) * BigInt(2) / BigInt(10));
-			const withholdingTransaction = {
-				user_withholding_wallet: withholding_wallet,
-				amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
-				hash: transaction.hash,
-				chain: 'Ethereum'
-			};
-
-			try {
-				process.send(withholdingTransaction);
-			}
-			catch (error) {
-				console.error('Error sending transaction data: ', error);
-			}	
-		}else{
-			return;
+		const targetWalletProof = block.transactionsRoot;
+		const proof = await web3.eth.getTransactionReceiptProof(targetWalletProof, targetWalletAddress);
+		const isTargetWalletIncluded = web3.eth.verifyProof(proof);
+		if (isTargetWalletIncluded) {
+			console.log('Success: Target wallet address is included in the block header');
+		} else {
+			console.log('Target wallet address is not included in the block header');
 		}
+
+
 	} catch (error) {
 		if (error.code === 430 || error.code === 101 || error.code === 506) return;
 		console.error('Error on transaction detection: ', error);
