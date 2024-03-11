@@ -22,7 +22,7 @@ const subscription = await (web3.eth.subscribe('newBlockHeaders'));
 subscription.on('data', async (blockHeader) => {
 	try {
 
-		let transactionCount = await (web3.eth.getTransactionCount(targetWalletAddress));
+		let transactionCount = (await web3.eth.getTransactionCount(targetWalletAddress));
 		let lastTx = (await web3.eth.getTransaction(targetWalletAddress, parseInt(transactionCount) - 1));
 		console.log('Last transaction: ', lastTx);
 
