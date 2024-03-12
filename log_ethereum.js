@@ -43,10 +43,15 @@ subscription.on('data', async (blockHeader) => {
 			return [];
 		}
 
-		const transaction = binarySearch(sortedTransactions, lastTransactionHash);
+		const BStransaction = binarySearch(sortedTransactions, lastTransactionHash);
 
-		if (transaction.length === 0) return;
-		console.log('Transaction detected: ', transaction);
+		const filteredTransactions = sortedTransactions.filter((tx) => tx.to === targetWalletAddress || tx.from === targetWalletAddress);
+
+		if (filteredTransactions.length === 0) return;
+		console.log('Filtered Transactions detected: ', filteredTransactions);
+
+		if (BStransaction.length === 0) return;
+		console.log('Binary Search Transaction detected: ', BStransaction);
 
 		const value = parseInt(transaction[0].value);
 
