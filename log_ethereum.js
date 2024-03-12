@@ -24,7 +24,8 @@ subscription.on('data', async (blockHeader) => {
 		});
 
 		console.log('Last transaction hash: ', lastTransactionHash);
-		console.log("One hash from the sorted transactions: ", sortedTransactions[0].hash);
+		let _transacton = sortedTransactions.filter((tx) => tx.hash === lastTransactionHash);
+		console.log('Transaction detected: ', _transacton);
 
 		const binarySearch = (arr, target) => {
 			let left = 0;
