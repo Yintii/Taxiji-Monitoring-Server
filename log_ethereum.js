@@ -22,54 +22,54 @@ subscription.on('data', async (blockHeader) => {
 		
 		const block = await web3.eth.getBlock(blockHeader.number, true);
 
-
-		console.log("There are ", block.transactions.length, " transactions in this block");
-
-		// const sortedTransactions = block.transactions.sort((a, b) => {
-		// 	return a.from - b.from;
-		// });
-
-		// //perform a binary search to find the transaction
-		// //checking both tx.from and tx.to for the targetWalletAddress
-		// const binarySearch = (arr, target) => {
-		// 	let left = 0;
-		// 	let right = arr.length - 1;
-		// 	while (left <= right) {
-		// 		let mid = left + Math.floor((right - left) / 2);
-		// 		if (arr[mid].from === target || arr[mid].to === target) {
-		// 			return [arr[mid]];
-		// 		}
-		// 		if (arr[mid].from < target) {
-		// 			left = mid + 1;
-		// 		} else {
-		// 			right = mid - 1;
-		// 		}
-		// 	}
-		// 	return [];
-		// }
-
-		// const transaction = binarySearch(sortedTransactions, targetWalletAddress);
+		const lastTransactionHash = await getLastTransactionHash(targetWalletAddress);
 
 
-		// if (transaction.length === 0) return;
-		// console.log('Transaction detected: ', transaction);
+		const sortedTransactions = block.transactions.sort((a, b) => {
+			return a.hash - b.hash;
+		});
 
-		// const value = parseInt(transaction[0].value);
+		//perform a binary search to find the transaction
+		//checking both tx.from and tx.to for the targetWalletAddress
+		const binarySearch = (arr, target) => {
+			let left = 0;
+			let right = arr.length - 1;
+			while (left <= right) {
+				let mid = left + Math.floor((right - left) / 2);
+				if (arr[mid].from === target || arr[mid].to === target) {
+					return [arr[mid]];
+				}
+				if (arr[mid].from < target) {
+					left = mid + 1;
+				} else {
+					right = mid - 1;
+				}
+			}
+			return [];
+		}
 
-		// console.log('Value of transaction: ', value);
+		const transaction = binarySearch(sortedTransactions, lastTransactionHash);
 
-		// const withholdingAmt = ethers.formatEther(BigInt(value) * BigInt(2) / BigInt(10));
-		// const withholdingTransaction = {
-		// 	user_withholding_wallet: withholding_wallet,
-		// 	amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
-		// 	hash: transaction[0].hash,
-		// 	chain: 'Ethereum'
-		// };
-		// try {
-		// 	process.send(withholdingTransaction);
-		// } catch (error) {
-		// 	console.error('Error sending transaction data: ', error);
-		// }
+
+		if (transaction.length === 0) return;
+		console.log('Transaction detected: ', transaction);
+
+		const value = parseInt(transaction[0].value);
+
+		console.log('Value of transaction: ', value);
+
+		const withholdingAmt = ethers.formatEther(BigInt(value) * BigInt(2) / BigInt(10));
+		const withholdingTransaction = {
+			user_withholding_wallet: withholding_wallet,
+			amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
+			hash: transaction[0].hash,
+			chain: 'Ethereum'
+		};
+		try {
+			process.send(withholdingTransaction);
+		} catch (error) {
+			console.error('Error sending transaction data: ', error);
+		}
 	} catch (error) {
 		if (error.code === 430 || error.code === 101 || error.code === 506) return;
 		console.error('Error on transaction detection: ', error);
@@ -92,3 +92,16 @@ process.on('exit', () => {
 
 
 
+async function getLastTransactionHash(walletAddress) {
+	try {
+		const response = await axios.get(`https://api-sepolia.etherscan.io/api?module=account&action=txlist&address=${walletAddress}&sort=desc&apikey=${process.env.ETHERSCAN_API_KEY}`);
+
+		if (response.data.status === '1' && response.data.result.length > 0) {
+			return response.data.result[0].hash;
+		} else {
+			throw new Error('No transactions found for the wallet address.');
+		}
+	} catch (error) {
+		throw new Error('Error fetching transactions: ' + error.message);
+	}
+}
