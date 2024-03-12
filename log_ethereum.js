@@ -27,7 +27,11 @@ subscription.on('data', async (blockHeader) => {
 
 		console.log('Last transaction hash: ', lastTransactionHash);
 
-		console.log("Block data: ", block);
+		console.log("Transactions type: ", typeof block.transactions);
+
+		let sortedTransactions = block.transactions.sort((a, b) => {
+			return a.hash - b.hash;
+		});
 
 		//perform a binary search to find the transaction
 		//checking both tx.from and tx.to for the targetWalletAddress
