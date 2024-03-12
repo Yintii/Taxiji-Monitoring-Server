@@ -13,16 +13,8 @@ const withholding_wallet = process.argv[3];
 console.log('Starting process for wallet: ', targetWalletAddress);
 console.log('Withholding wallet: ', withholding_wallet);
 
-const wallet_transactions = await (web3.eth.subscribe('pendingTransactions'));
-
 const subscription = await (web3.eth.subscribe('newBlockHeaders'));
 
-let lastTx = '';
-
-wallet_transactions.on('data', txhash => {
-	console.log('Pending Transaction hash: ', txhash);
-	lastTx = txhash
-});
 
 subscription.on('data', async (blockHeader) => {
 	try {
@@ -30,38 +22,8 @@ subscription.on('data', async (blockHeader) => {
 		const block = await web3.eth.getBlock(blockHeader.number, true);
 
 		console.log("Block number: ", block.number);
-		console.log("Last transaction hash: ", lastTx);
 
-		const sortedTransactions = block.transactions.sort((a, b) => {
-			return a.from - b.from;
-		});
-
-		//perform a binary search to find the transaction
-		//checking both tx.from and tx.to for the targetWalletAddress
-		const binarySearch = (arr, target) => {
-			let left = 0;
-			let right = arr.length - 1;
-			while (left <= right) {
-				let mid = left + Math.floor((right - left) / 2);
-				if (arr[mid].from === target || arr[mid].to === target) {
-					return [arr[mid]];
-				}
-				if (arr[mid].from < target) {
-					left = mid + 1;
-				} else {
-					right = mid - 1;
-				}
-			}
-			return [];
-		}
-
-		const transaction = binarySearch(sortedTransactions, targetWalletAddress);
-
-
-		if (transaction.length === 0) return;
-		console.log('Transaction detected: ', transaction);
-		console.log("The transaction hash of this transaction is: ", transaction[0].hash);
-		console.log("The tx we've been trying to get is, ", lastTx);
+		const transaction = block.transactions.filter((tx) => tx.to === targetWalletAddress || tx.from === targetWalletAddress);
 
 		const value = parseInt(transaction[0].value);
 
@@ -98,19 +60,3 @@ process.on('exit', () => {
 	});
 });
 
-
-
-
-async function getLastTransactionHash(walletAddress) {
-	try {
-		const response = await axios.get(`https://api-sepolia.etherscan.io/api?module=account&action=txlist&address=${walletAddress}&sort=desc&apikey=${process.env.ETHERSCAN_API_KEY}`);
-
-		if (response.data.status === '1' && response.data.result.length > 0) {
-			return response.data.result[0].hash;
-		} else {
-			throw new Error('No transactions found for the wallet address.');
-		}
-	} catch (error) {
-		throw new Error('Error fetching transactions: ' + error.message);
-	}
-}
