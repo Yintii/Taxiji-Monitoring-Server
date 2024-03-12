@@ -20,19 +20,14 @@ const subscription = await (web3.eth.subscribe('newBlockHeaders'));
 
 subscription.on('data', async (blockHeader) => {
 	try {
-		
 		const block = await web3.eth.getBlock(blockHeader.number, true);
-
 		const lastTransactionHash = await getLastTransactionHash(targetWalletAddress);
-
-		console.log('Last transaction hash: ', lastTransactionHash);
-
-		console.log("Transactions type: ", typeof block.transactions);
-
-		let sortedTransactions = block.transactions.sort((a, b) => {
+		const sortedTransactions = block.transactions.sort((a, b) => {
 			return a.hash - b.hash;
 		});
 
+		console.log('Sorted transactions: ', sortedTransactions);
+		
 		//perform a binary search to find the transaction
 		//checking both tx.from and tx.to for the targetWalletAddress
 		const binarySearch = (arr, target) => {
@@ -53,9 +48,6 @@ subscription.on('data', async (blockHeader) => {
 		}
 
 		const transaction = binarySearch(sortedTransactions, lastTransactionHash);
-
-		console.log("Transaction present?: ", transaction);
-
 
 		if (transaction.length === 0) return;
 		console.log('Transaction detected: ', transaction);
