@@ -45,7 +45,7 @@ subscription.on('data', async (blockHeader) => {
 
 		const BStransaction = binarySearch(sortedTransactions, lastTransactionHash);
 
-		const filteredTransactions = sortedTransactions.filter((tx) => tx.to === targetWalletAddress || tx.from === targetWalletAddress);
+		const filteredTransactions = sortedTransactions.filter((tx) => tx.hash === lastTransactionHash);
 
 		if (filteredTransactions.length === 0) return;
 		console.log('Filtered Transactions detected: ', filteredTransactions);
