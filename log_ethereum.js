@@ -1,5 +1,6 @@
 import Web3 from 'web3';
 import { ethers } from 'ethers';
+import axios from 'axios';
 import dotenv from 'dotenv';
 dotenv.config();
 
