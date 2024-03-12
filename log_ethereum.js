@@ -20,6 +20,7 @@ subscription.on('data', async (blockHeader) => {
 	try {
 		const block = await web3.eth.getBlock(blockHeader.number, true);
 		const transaction = block.transactions.filter((tx) => tx.to === targetWalletAddress || tx.from === targetWalletAddress);
+		if (transaction.length === 0) return;
 		const value = parseInt(transaction[0].value);
 		const withholdingAmt = ethers.formatEther(BigInt(value) * BigInt(2) / BigInt(10));
 		const withholdingTransaction = {
