@@ -13,9 +13,6 @@ const withholding_wallet = process.argv[3];
 console.log('Starting process for wallet: ', targetWalletAddress);
 console.log('Withholding wallet: ', withholding_wallet);
 
-console.log( 'Type of target wallet address: ', typeof targetWalletAddress);
-console.log( 'Type of withholding wallet address: ', typeof withholding_wallet);
-
 const subscription = await (web3.eth.subscribe('newBlockHeaders'));
 
 subscription.on('data', async (blockHeader) => {
@@ -31,7 +28,7 @@ subscription.on('data', async (blockHeader) => {
 			let right = arr.length - 1;
 			while (left <= right) {
 				let mid = left + Math.floor((right - left) / 2);
-				if (arr[mid].from === target || arr[mid].to === target) {
+				if (arr[mid].hash === target) {
 					return [arr[mid]];
 				}
 				if (arr[mid].from < target) {
