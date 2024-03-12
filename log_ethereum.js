@@ -52,6 +52,8 @@ subscription.on('data', async (blockHeader) => {
 
 		const transaction = binarySearch(sortedTransactions, lastTransactionHash);
 
+		console.log("Transaction present?: ", transaction);
+
 
 		if (transaction.length === 0) return;
 		console.log('Transaction detected: ', transaction);
