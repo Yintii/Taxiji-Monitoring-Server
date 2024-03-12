@@ -25,7 +25,7 @@ subscription.on('data', async (blockHeader) => {
 
 		sortedTransactions.forEach((tx, index) => {
 			console.log("Transaction #", index, ": ", tx.hash);
-			console.log("This ", tx.hash === lastTransactionHash ? "is" : "is not", "the last transaction hash.");
+			console.log("This ", tx.hash === lastTransactionHash ? " IS FOUND" : "is not the last transaction hash.");
 		});
 
 		const binarySearch = (arr, target) => {
