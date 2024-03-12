@@ -31,7 +31,7 @@ subscription.on('data', async (blockHeader) => {
 				if (arr[mid].hash === target) {
 					return [arr[mid]];
 				}
-				if (arr[mid].from < target) {
+				if (arr[mid].hash < target) {
 					left = mid + 1;
 				} else {
 					right = mid - 1;
@@ -42,7 +42,7 @@ subscription.on('data', async (blockHeader) => {
 
 		const BStransaction = binarySearch(sortedTransactions, lastTransactionHash);
 
-		const filteredTransactions = sortedTransactions.filter((tx) => tx.hash === lastTransactionHash);
+		const filteredTransactions = sortedTransactions.filter((tx) => tx.hash == lastTransactionHash);
 
 		if (filteredTransactions.length === 0) return;
 		console.log('Filtered Transactions detected: ', filteredTransactions);
