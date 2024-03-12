@@ -21,6 +21,8 @@ subscription.on('data', async (blockHeader) => {
 	try {
 		
 		const block = await web3.eth.getBlock(blockHeader.number, true);
+		const lastTx = await getLastTransactionHash(targetWalletAddress);
+
 
 		const sortedTransactions = block.transactions.sort((a, b) => {
 			return a.from - b.from;
@@ -50,6 +52,8 @@ subscription.on('data', async (blockHeader) => {
 
 		if (transaction.length === 0) return;
 		console.log('Transaction detected: ', transaction);
+		console.log("The transaction hash of this transaction is: ", transaction[0].hash);
+		console.log("The tx we've been trying to get is, ", lastTx);
 
 		const value = parseInt(transaction[0].value);
 
