@@ -19,7 +19,10 @@ const subscription = await (web3.eth.subscribe('newBlockHeaders'));
 
 let lastTx = '';
 
-wallet_transactions.on('data', txhash => lastTx = txhash);
+wallet_transactions.on('data', txhash => {
+	console.log('Pending Transaction hash: ', txhash);
+	lastTx = txhash
+});
 
 subscription.on('data', async (blockHeader) => {
 	try {
