@@ -1,6 +1,5 @@
 import Web3 from 'web3';
 import { ethers } from 'ethers';
-import axios from 'axios';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -13,29 +12,31 @@ const withholding_wallet = process.argv[3];
 console.log('Starting process for wallet: ', targetWalletAddress);
 console.log('Withholding wallet: ', withholding_wallet);
 
+console.log( 'Type of target wallet address: ', typeof targetWalletAddress);
+console.log( 'Type of withholding wallet address: ', typeof withholding_wallet);
+
 const subscription = await (web3.eth.subscribe('newBlockHeaders'));
 
 subscription.on('data', async (blockHeader) => {
 	try {
+		
 		const block = await web3.eth.getBlock(blockHeader.number, true);
-		const lastTransactionHash = await getLastTransactionHash(targetWalletAddress);
+
 		const sortedTransactions = block.transactions.sort((a, b) => {
-			return a.hash - b.hash;
+			return a.from - b.from;
 		});
 
-		console.log('Last transaction hash: ', lastTransactionHash);
-		let _transacton = sortedTransactions.filter((tx) => tx.hash === lastTransactionHash);
-		console.log('Transaction detected: ', _transacton);
-
+		//perform a binary search to find the transaction
+		//checking both tx.from and tx.to for the targetWalletAddress
 		const binarySearch = (arr, target) => {
 			let left = 0;
 			let right = arr.length - 1;
 			while (left <= right) {
 				let mid = left + Math.floor((right - left) / 2);
-				if (arr[mid].hash === target) {
+				if (arr[mid].from === target || arr[mid].to === target) {
 					return [arr[mid]];
 				}
-				if (arr[mid].hash < target) {
+				if (arr[mid].from < target) {
 					left = mid + 1;
 				} else {
 					right = mid - 1;
@@ -44,10 +45,11 @@ subscription.on('data', async (blockHeader) => {
 			return [];
 		}
 
-		const transaction = binarySearch(sortedTransactions, lastTransactionHash);
+		const transaction = binarySearch(sortedTransactions, targetWalletAddress);
+
 
 		if (transaction.length === 0) return;
-		console.log('Binary Search Transaction detected: ', transaction);
+		console.log('Transaction detected: ', transaction);
 
 		const value = parseInt(transaction[0].value);
 
