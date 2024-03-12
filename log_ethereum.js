@@ -25,6 +25,7 @@ subscription.on('data', async (blockHeader) => {
 
 		const lastTransactionHash = await getLastTransactionHash(targetWalletAddress);
 
+		console.log('Last transaction hash: ', lastTransactionHash);
 
 		const sortedTransactions = block.transactions.sort((a, b) => {
 			return a.hash - b.hash;
