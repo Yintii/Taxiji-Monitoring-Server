@@ -26,10 +26,6 @@ subscription.on('data', async (blockHeader) => {
 			return a.hash - b.hash;
 		});
 
-		console.log('Sorted transactions: ', sortedTransactions);
-		
-		//perform a binary search to find the transaction
-		//checking both tx.from and tx.to for the targetWalletAddress
 		const binarySearch = (arr, target) => {
 			let left = 0;
 			let right = arr.length - 1;
