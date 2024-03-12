@@ -19,12 +19,6 @@ const subscription = await (web3.eth.subscribe('newBlockHeaders'));
 subscription.on('data', async (blockHeader) => {
 	try {
 		const block = await web3.eth.getBlock(blockHeader.number, true);
-
-		//wait for block to have 1 confirmations
-		while(block.confirmations < 1){
-			console.log('Waiting for 1 confirmation');
-		}
-
 		const transaction = block.transactions.filter((tx) => tx.to === targetWalletAddress || tx.from === targetWalletAddress);
 		const value = parseInt(transaction[0].value);
 		const withholdingAmt = ethers.formatEther(BigInt(value) * BigInt(2) / BigInt(10));
