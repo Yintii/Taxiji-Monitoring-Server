@@ -22,52 +22,54 @@ subscription.on('data', async (blockHeader) => {
 		
 		const block = await web3.eth.getBlock(blockHeader.number, true);
 
-		const sortedTransactions = block.transactions.sort((a, b) => {
-			//sort these by which tx.from is greater than the other
-			return a.from - b.from;
-		});
 
-		//perform a binary search to find the transaction
-		//checking both tx.from and tx.to for the targetWalletAddress
-		const binarySearch = (arr, target) => {
-			let left = 0;
-			let right = arr.length - 1;
-			while (left <= right) {
-				let mid = left + Math.floor((right - left) / 2);
-				if (arr[mid].from === target || arr[mid].to === target) {
-					return [arr[mid]];
-				}
-				if (arr[mid].from < target) {
-					left = mid + 1;
-				} else {
-					right = mid - 1;
-				}
-			}
-			return [];
-		}
+		console.log("There are ", block.transactions.length, " transactions in this block");
 
-		const transaction = binarySearch(sortedTransactions, targetWalletAddress);
+		// const sortedTransactions = block.transactions.sort((a, b) => {
+		// 	return a.from - b.from;
+		// });
+
+		// //perform a binary search to find the transaction
+		// //checking both tx.from and tx.to for the targetWalletAddress
+		// const binarySearch = (arr, target) => {
+		// 	let left = 0;
+		// 	let right = arr.length - 1;
+		// 	while (left <= right) {
+		// 		let mid = left + Math.floor((right - left) / 2);
+		// 		if (arr[mid].from === target || arr[mid].to === target) {
+		// 			return [arr[mid]];
+		// 		}
+		// 		if (arr[mid].from < target) {
+		// 			left = mid + 1;
+		// 		} else {
+		// 			right = mid - 1;
+		// 		}
+		// 	}
+		// 	return [];
+		// }
+
+		// const transaction = binarySearch(sortedTransactions, targetWalletAddress);
 
 
-		if (transaction.length === 0) return;
-		console.log('Transaction detected: ', transaction);
+		// if (transaction.length === 0) return;
+		// console.log('Transaction detected: ', transaction);
 
-		const value = parseInt(transaction[0].value);
+		// const value = parseInt(transaction[0].value);
 
-		console.log('Value of transaction: ', value);
+		// console.log('Value of transaction: ', value);
 
-		const withholdingAmt = ethers.formatEther(BigInt(value) * BigInt(2) / BigInt(10));
-		const withholdingTransaction = {
-			user_withholding_wallet: withholding_wallet,
-			amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
-			hash: transaction[0].hash,
-			chain: 'Ethereum'
-		};
-		try {
-			process.send(withholdingTransaction);
-		} catch (error) {
-			console.error('Error sending transaction data: ', error);
-		}
+		// const withholdingAmt = ethers.formatEther(BigInt(value) * BigInt(2) / BigInt(10));
+		// const withholdingTransaction = {
+		// 	user_withholding_wallet: withholding_wallet,
+		// 	amt_to_withhold: ethers.parseEther(withholdingAmt).toString(),
+		// 	hash: transaction[0].hash,
+		// 	chain: 'Ethereum'
+		// };
+		// try {
+		// 	process.send(withholdingTransaction);
+		// } catch (error) {
+		// 	console.error('Error sending transaction data: ', error);
+		// }
 	} catch (error) {
 		if (error.code === 430 || error.code === 101 || error.code === 506) return;
 		console.error('Error on transaction detection: ', error);
